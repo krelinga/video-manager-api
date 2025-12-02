@@ -46,10 +46,10 @@ jobs:
       - name: Generate Go server
         run: |
           cd go/vmapi/vmserver
-          oapi-codegen -generate std-http-server,spec -o vmserver/server.gen.go -package vmserver ../../../openapi.yml
+          oapi-codegen -generate std-http-server,spec -o server.gen.go -package vmserver ../../../openapi.yml
           echo "Generated server code:"
-          wc -l vmserver/server.gen.go
-          head -20 vmserver/server.gen.go
+          wc -l server.gen.go
+          head -20 server.gen.go
           cd ../../../
 
       - name: Generate Go client
