@@ -3,8 +3,6 @@ info:
   title: Video Manager Catalog API
   version: 1.0.0
   description: REST API for managing movie edition kinds and cards in the video catalog.
-servers:
-  - url: http://localhost:8080
 
 paths:
   # MovieEditionKind endpoints
@@ -34,7 +32,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'types.yml#/components/schemas/MovieEditionKind'
+                  $ref: '#/components/schemas/MovieEditionKind'
     post:
       summary: Create a new movie edition kind
       operationId: postMovieEditionKind
@@ -55,7 +53,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/MovieEditionKind'
+                $ref: '#/components/schemas/MovieEditionKind'
 
   /movie-edition-kinds/{id}:
     get:
@@ -74,7 +72,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/MovieEditionKind'
+                $ref: '#/components/schemas/MovieEditionKind'
         '404':
           description: Not found
     patch:
@@ -94,14 +92,14 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'types.yml#/components/schemas/MovieEditionKindPatch'
+                $ref: '#/components/schemas/MovieEditionKindPatch'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/MovieEditionKind'
+                $ref: '#/components/schemas/MovieEditionKind'
         '404':
           description: Not found
     delete:
@@ -147,7 +145,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'types.yml#/components/schemas/Card'
+                  $ref: '#/components/schemas/Card'
     post:
       summary: Create a new card
       operationId: postCard
@@ -160,14 +158,14 @@ paths:
               description: Request body for creating a card.  Only one field should be set.
               properties:
                 movie:
-                  $ref: 'types.yml#/components/schemas/MoviePost'
+                  $ref: '#/components/schemas/MoviePost'
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/Card'
+                $ref: '#/components/schemas/Card'
 
   /cards/{id}:
     get:
@@ -186,7 +184,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/Card'
+                $ref: '#/components/schemas/Card'
         '404':
           description: Not found
     patch:
@@ -206,14 +204,14 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'types.yml#/components/schemas/CardPatch'
+                $ref: '#/components/schemas/CardPatch'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/Card'
+                $ref: '#/components/schemas/Card'
         '404':
           description: Not found
     delete:
@@ -231,3 +229,128 @@ paths:
           description: Deleted successfully
         '404':
           description: Not found
+
+components:
+  schemas:
+    # MovieEditionKind types
+    MovieEditionKind:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        name:
+          type: string
+        is_default:
+          type: boolean
+      required:
+        - id
+        - name
+        - is_default
+
+    MovieEditionKindPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        is_default:
+          type: boolean
+
+    # MovieEdition types
+    MovieEdition:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        kind:
+          $ref: '#/components/schemas/MovieEditionKind'
+      required:
+        - id
+        - kind
+
+    # Movie types
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        tmdb_id:
+          type: integer
+          format: uint64
+        fanart_id:
+          type: string
+        editions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieEdition'
+      required:
+        - id
+
+    MoviePatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        tmdb_id:
+          type: integer
+          format: uint64
+        fanart_id:
+          type: string
+        add_movie_edition_kind_id:
+          type: integer
+          format: uint32
+        remove_movie_edition_id:
+          type: integer
+          format: uint32
+
+    # Card types
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        name:
+          type: string
+        year:
+          type: integer
+          format: uint32
+        movie:
+          $ref: '#/components/schemas/Movie'
+      required:
+        - id
+
+    CardPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        year:
+          type: integer
+          format: uint32
+        movie:
+          $ref: '#/components/schemas/MoviePatch'
+
+    MoviePostDataSource:
+      type: object
+      description: Data source for creating a movie.  Only one field should be set.
+      properties:
+        tmdb_movie_id:
+          type: integer
+          format: uint64
+
+    MoviePost:
+      type: object
+      properties:
+        data_source:
+          $ref: '#/components/schemas/MoviePostDataSource'
+        movie_edition_kind_ids:
+          type: array
+          items:
+            type: integer
+            format: uint32
+      required:
+        - data_source
