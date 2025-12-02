@@ -2,7 +2,7 @@
 package: vmapi
 output: types.gen.go
 generate:
-  types: true
+  models: true
 output-options:
   # NOTE that this is only required for the `Unreferenced` type
   skip-prune: true
