@@ -32,6 +32,14 @@ type ListCardsParams struct {
 	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
 }
 
+// PostCardJSONBody defines parameters for PostCard.
+type PostCardJSONBody struct {
+	Movie *externalRef0.MoviePost `json:"movie,omitempty"`
+}
+
+// PatchCardJSONBody defines parameters for PatchCard.
+type PatchCardJSONBody = []externalRef0.CardPatch
+
 // ListMovieEditionKindsParams defines parameters for ListMovieEditionKinds.
 type ListMovieEditionKindsParams struct {
 	// PageSize Maximum number of items to return
@@ -41,17 +49,26 @@ type ListMovieEditionKindsParams struct {
 	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
 }
 
+// PostMovieEditionKindJSONBody defines parameters for PostMovieEditionKind.
+type PostMovieEditionKindJSONBody struct {
+	IsDefault *bool   `json:"is_default,omitempty"`
+	Name      *string `json:"name,omitempty"`
+}
+
+// PatchMovieEditionKindJSONBody defines parameters for PatchMovieEditionKind.
+type PatchMovieEditionKindJSONBody = []externalRef0.MovieEditionKindPatch
+
 // PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
-type PostCardJSONRequestBody = externalRef0.PostCardRequest
+type PostCardJSONRequestBody PostCardJSONBody
 
 // PatchCardJSONRequestBody defines body for PatchCard for application/json ContentType.
-type PatchCardJSONRequestBody = externalRef0.PatchCardRequest
+type PatchCardJSONRequestBody = PatchCardJSONBody
 
 // PostMovieEditionKindJSONRequestBody defines body for PostMovieEditionKind for application/json ContentType.
-type PostMovieEditionKindJSONRequestBody = externalRef0.PostMovieEditionKindRequest
+type PostMovieEditionKindJSONRequestBody PostMovieEditionKindJSONBody
 
 // PatchMovieEditionKindJSONRequestBody defines body for PatchMovieEditionKind for application/json ContentType.
-type PatchMovieEditionKindJSONRequestBody = externalRef0.PatchMovieEditionKindRequest
+type PatchMovieEditionKindJSONRequestBody = PatchMovieEditionKindJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -486,7 +503,7 @@ type ListCardsResponseObject interface {
 	VisitListCardsResponse(w http.ResponseWriter) error
 }
 
-type ListCards200JSONResponse externalRef0.ListCardsResponse
+type ListCards200JSONResponse []externalRef0.Card
 
 func (response ListCards200JSONResponse) VisitListCardsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -503,7 +520,7 @@ type PostCardResponseObject interface {
 	VisitPostCardResponse(w http.ResponseWriter) error
 }
 
-type PostCard201JSONResponse externalRef0.CardResponse
+type PostCard201JSONResponse externalRef0.Card
 
 func (response PostCard201JSONResponse) VisitPostCardResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -544,7 +561,7 @@ type GetCardResponseObject interface {
 	VisitGetCardResponse(w http.ResponseWriter) error
 }
 
-type GetCard200JSONResponse externalRef0.CardResponse
+type GetCard200JSONResponse externalRef0.Card
 
 func (response GetCard200JSONResponse) VisitGetCardResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -570,7 +587,7 @@ type PatchCardResponseObject interface {
 	VisitPatchCardResponse(w http.ResponseWriter) error
 }
 
-type PatchCard200JSONResponse externalRef0.CardResponse
+type PatchCard200JSONResponse externalRef0.Card
 
 func (response PatchCard200JSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -595,7 +612,7 @@ type ListMovieEditionKindsResponseObject interface {
 	VisitListMovieEditionKindsResponse(w http.ResponseWriter) error
 }
 
-type ListMovieEditionKinds200JSONResponse externalRef0.ListMovieEditionKindsResponse
+type ListMovieEditionKinds200JSONResponse []externalRef0.MovieEditionKind
 
 func (response ListMovieEditionKinds200JSONResponse) VisitListMovieEditionKindsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -612,7 +629,7 @@ type PostMovieEditionKindResponseObject interface {
 	VisitPostMovieEditionKindResponse(w http.ResponseWriter) error
 }
 
-type PostMovieEditionKind201JSONResponse externalRef0.MovieEditionKindResponse
+type PostMovieEditionKind201JSONResponse externalRef0.MovieEditionKind
 
 func (response PostMovieEditionKind201JSONResponse) VisitPostMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -653,7 +670,7 @@ type GetMovieEditionKindResponseObject interface {
 	VisitGetMovieEditionKindResponse(w http.ResponseWriter) error
 }
 
-type GetMovieEditionKind200JSONResponse externalRef0.MovieEditionKindResponse
+type GetMovieEditionKind200JSONResponse externalRef0.MovieEditionKind
 
 func (response GetMovieEditionKind200JSONResponse) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -679,7 +696,7 @@ type PatchMovieEditionKindResponseObject interface {
 	VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error
 }
 
-type PatchMovieEditionKind200JSONResponse externalRef0.MovieEditionKindResponse
+type PatchMovieEditionKind200JSONResponse externalRef0.MovieEditionKind
 
 func (response PatchMovieEditionKind200JSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -1046,25 +1063,24 @@ func (sh *strictHandler) PatchMovieEditionKind(w http.ResponseWriter, r *http.Re
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

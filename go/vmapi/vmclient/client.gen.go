@@ -26,6 +26,14 @@ type ListCardsParams struct {
 	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
 }
 
+// PostCardJSONBody defines parameters for PostCard.
+type PostCardJSONBody struct {
+	Movie *externalRef0.MoviePost `json:"movie,omitempty"`
+}
+
+// PatchCardJSONBody defines parameters for PatchCard.
+type PatchCardJSONBody = []externalRef0.CardPatch
+
 // ListMovieEditionKindsParams defines parameters for ListMovieEditionKinds.
 type ListMovieEditionKindsParams struct {
 	// PageSize Maximum number of items to return
@@ -35,17 +43,26 @@ type ListMovieEditionKindsParams struct {
 	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
 }
 
+// PostMovieEditionKindJSONBody defines parameters for PostMovieEditionKind.
+type PostMovieEditionKindJSONBody struct {
+	IsDefault *bool   `json:"is_default,omitempty"`
+	Name      *string `json:"name,omitempty"`
+}
+
+// PatchMovieEditionKindJSONBody defines parameters for PatchMovieEditionKind.
+type PatchMovieEditionKindJSONBody = []externalRef0.MovieEditionKindPatch
+
 // PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
-type PostCardJSONRequestBody = externalRef0.PostCardRequest
+type PostCardJSONRequestBody PostCardJSONBody
 
 // PatchCardJSONRequestBody defines body for PatchCard for application/json ContentType.
-type PatchCardJSONRequestBody = externalRef0.PatchCardRequest
+type PatchCardJSONRequestBody = PatchCardJSONBody
 
 // PostMovieEditionKindJSONRequestBody defines body for PostMovieEditionKind for application/json ContentType.
-type PostMovieEditionKindJSONRequestBody = externalRef0.PostMovieEditionKindRequest
+type PostMovieEditionKindJSONRequestBody PostMovieEditionKindJSONBody
 
 // PatchMovieEditionKindJSONRequestBody defines body for PatchMovieEditionKind for application/json ContentType.
-type PatchMovieEditionKindJSONRequestBody = externalRef0.PatchMovieEditionKindRequest
+type PatchMovieEditionKindJSONRequestBody = PatchMovieEditionKindJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -852,7 +869,7 @@ type ClientWithResponsesInterface interface {
 type ListCardsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.ListCardsResponse
+	JSON200      *[]externalRef0.Card
 }
 
 // Status returns HTTPResponse.Status
@@ -874,7 +891,7 @@ func (r ListCardsResponse) StatusCode() int {
 type PostCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *externalRef0.CardResponse
+	JSON201      *externalRef0.Card
 }
 
 // Status returns HTTPResponse.Status
@@ -917,7 +934,7 @@ func (r DeleteCardResponse) StatusCode() int {
 type GetCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.CardResponse
+	JSON200      *externalRef0.Card
 }
 
 // Status returns HTTPResponse.Status
@@ -939,7 +956,7 @@ func (r GetCardResponse) StatusCode() int {
 type PatchCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.CardResponse
+	JSON200      *externalRef0.Card
 }
 
 // Status returns HTTPResponse.Status
@@ -961,7 +978,7 @@ func (r PatchCardResponse) StatusCode() int {
 type ListMovieEditionKindsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.ListMovieEditionKindsResponse
+	JSON200      *[]externalRef0.MovieEditionKind
 }
 
 // Status returns HTTPResponse.Status
@@ -983,7 +1000,7 @@ func (r ListMovieEditionKindsResponse) StatusCode() int {
 type PostMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *externalRef0.MovieEditionKindResponse
+	JSON201      *externalRef0.MovieEditionKind
 }
 
 // Status returns HTTPResponse.Status
@@ -1026,7 +1043,7 @@ func (r DeleteMovieEditionKindResponse) StatusCode() int {
 type GetMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.MovieEditionKindResponse
+	JSON200      *externalRef0.MovieEditionKind
 }
 
 // Status returns HTTPResponse.Status
@@ -1048,7 +1065,7 @@ func (r GetMovieEditionKindResponse) StatusCode() int {
 type PatchMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.MovieEditionKindResponse
+	JSON200      *externalRef0.MovieEditionKind
 }
 
 // Status returns HTTPResponse.Status
@@ -1204,7 +1221,7 @@ func ParseListCardsResponse(rsp *http.Response) (*ListCardsResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.ListCardsResponse
+		var dest []externalRef0.Card
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1230,7 +1247,7 @@ func ParsePostCardResponse(rsp *http.Response) (*PostCardResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest externalRef0.CardResponse
+		var dest externalRef0.Card
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1272,7 +1289,7 @@ func ParseGetCardResponse(rsp *http.Response) (*GetCardResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.CardResponse
+		var dest externalRef0.Card
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1298,7 +1315,7 @@ func ParsePatchCardResponse(rsp *http.Response) (*PatchCardResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.CardResponse
+		var dest externalRef0.Card
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1324,7 +1341,7 @@ func ParseListMovieEditionKindsResponse(rsp *http.Response) (*ListMovieEditionKi
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.ListMovieEditionKindsResponse
+		var dest []externalRef0.MovieEditionKind
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1350,7 +1367,7 @@ func ParsePostMovieEditionKindResponse(rsp *http.Response) (*PostMovieEditionKin
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest externalRef0.MovieEditionKindResponse
+		var dest externalRef0.MovieEditionKind
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1392,7 +1409,7 @@ func ParseGetMovieEditionKindResponse(rsp *http.Response) (*GetMovieEditionKindR
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.MovieEditionKindResponse
+		var dest externalRef0.MovieEditionKind
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1418,7 +1435,7 @@ func ParsePatchMovieEditionKindResponse(rsp *http.Response) (*PatchMovieEditionK
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.MovieEditionKindResponse
+		var dest externalRef0.MovieEditionKind
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

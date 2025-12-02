@@ -88,6 +88,18 @@ type MoviePatch struct {
 	TmdbId                *uint64 `json:"tmdb_id,omitempty"`
 }
 
+// MoviePost defines model for MoviePost.
+type MoviePost struct {
+	// DataSource Data source for creating a movie.  Only one field should be set.
+	DataSource          MoviePostDataSource `json:"data_source"`
+	MovieEditionKindIds *[]uint32           `json:"movie_edition_kind_ids,omitempty"`
+}
+
+// MoviePostDataSource Data source for creating a movie.  Only one field should be set.
+type MoviePostDataSource struct {
+	TmdbMovieId *uint64 `json:"tmdb_movie_id,omitempty"`
+}
+
 // PatchCardRequest defines model for PatchCardRequest.
 type PatchCardRequest struct {
 	Patches []CardPatch `json:"patches"`
@@ -98,15 +110,9 @@ type PatchMovieEditionKindRequest struct {
 	Patches []MovieEditionKindPatch `json:"patches"`
 }
 
-// PostCardMovie defines model for PostCardMovie.
-type PostCardMovie struct {
-	MovieEditionKindIds []uint32 `json:"movie_edition_kind_ids"`
-	TmdbMovieId         *uint64  `json:"tmdb_movie_id,omitempty"`
-}
-
 // PostCardRequest defines model for PostCardRequest.
 type PostCardRequest struct {
-	Movie *PostCardMovie `json:"movie,omitempty"`
+	Movie *MoviePost `json:"movie,omitempty"`
 }
 
 // PostMovieEditionKindRequest defines model for PostMovieEditionKindRequest.
@@ -118,17 +124,18 @@ type PostMovieEditionKindRequest struct {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RWTW/bMAz9KwK3o9F067CDb0Oxw9AFKIZhl6EwFItOtNqSKjHZgiL/fZDsZrMtu87X",
-	"qYXyTL7HR5F6hlxXRitU5CB9BpevsOLh31tuhf9rrDZoSWI4leGs0LbiBCmspaKb95AAbQ1CClIRLtHC",
-	"LoFKbyR68FuLBaTwZvYv1azJM5sH0C4BxasAbuI4slIt/Q9b5HZayl0CFp/W0qKA9Kdn+rAH6cUvzMnH",
-	"87LuOeUrH1Sgy600JLWCFMIxq6Hst6QV06rcMq2QFRJLwRwSM2iZVI64yhGSTnWma64pnE14VOY3dEYr",
-	"h30X88bbMZrB/25Rw4exsn6VjvwXbjxp3UOElZuWfp+JW8u3oV74hzLDl5iRfkQVKV2EshvkHMz4LKRv",
-	"gTupxvgHczOssdmjB09W001zFmUxQjGd85eubOtpPjxORExAwRW3lNUjotfP0ycHVWKRReAfPxx961vU",
-	"TxhqvsiHe93n2ER6jepdk+5YutJlAgu+Luk/SxZal8jVyPCJ8Q3QVsQp5C82aY9X9irnQybAyb0QCTlY",
-	"14sVkwuR9Ylk0/ts/OZbrPQGOxkuNw56xQsFqhfi0xod9Y01HoGHLaf9Bm+PwY6/L5Efhnj1u+9MHONX",
-	"8SS+ut7xA/sk2kFtvpPs7myVYH8d+8idMEBsTOKgC5NeeO1CxXtS998eg0nPM8YDqi/aw6QqdH+wfN8a",
-	"ZAILqeqHAiu0ZbRC9kMK1GzOFV+iZbeceKmX7NP9lytvhqTSxx8EMR/XQQIbtK7O9O7q+uraK9EGFTcS",
-	"UrgJR4lvyJWDVK3Lcvc3AAD//3uYv5OuDAAA",
+	"H4sIAAAAAAAC/7RWTW/UMBD9K5bhGG0LRRxyQ4UDKhUVIC6oimbjya5p4kntSWFV7X9Hdralmzhp9qOn",
+	"XTnjmffmvUzmXuZU1WTQsJPpvXT5EisIf8/BKv9bW6rRssZwqsNZQbYClqlstOGztzKRvKpRplIbxgVa",
+	"uU5kRXcaffBri4VM5auT/6VONnVOLkPQOpEGqhC8yePYarPwD1YIdlrJdSIt3jbaopLpL4/0+jGI5r8x",
+	"Z5/P07oCzpc+qUKXW12zJiNTGY5FGyr+aF4KMuVKkEFRaCyVcMiiRiu0cQwmR5l0ujOdcwvhaMSjNL+h",
+	"q8k47KuYb7Qdgxn07zY1XIy19Yt27G+48aKthxgrN638YyWwFlahX/iXsxoWmDHdoIm0LgLZDWIOYnxS",
+	"2lvgQpsx/EHcDNvY7MYHT2bTLXMUZjFAMZ6XD67c5rO5uB+JGIECDFjO2hHR8/P0ycGVmmeR8Pfv9n7r",
+	"t6AfMNR8k3fXuo9xk+k5qBebcvvC1S5TWEBT8hNJ5kQlghkZPjG8IXQr4xTwLzZp92f2LOZdJsDBXoik",
+	"HOzrizUTlMr6QLLpPht/8y1WdIedCi83DgaaR477iipgyBw1Np/42SbHH4Hhe3vlYc3p9m17pk4iuTVL",
+	"OyZ5ivJ6jOATaD2b+GeiTSIKsiK3CKzNQoAIHGZCfO34ZklNqcQcvYNmPdcEXVr6h6gT7NuuK7cNxkSq",
+	"fQTutjo87lejjX3IfD2Eqz8bjoQxPigPwkvtBjYIcYfl1L8rcbGovzINFjzO1ydE9Qn7MG0K6hv9x6pG",
+	"obDQpt1vgtt5ieKnVkjiEgws0IpzYChpIT5cffbeZs2lzz8YJHxeJxN5h9a1ld7MTmenngnVaKDWMpVn",
+	"4SjxSi2dTE1Tlut/AQAA///ifTspZQ0AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

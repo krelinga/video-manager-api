@@ -168,25 +168,32 @@ components:
       required:
         - card
 
-    PostCardMovie:
+    MoviePostDataSource:
       type: object
+      description: Data source for creating a movie.  Only one field should be set.
       properties:
         tmdb_movie_id:
           type: integer
           format: uint64
+
+    MoviePost:
+      type: object
+      properties:
+        data_source:
+          $ref: '#/components/schemas/MoviePostDataSource'
         movie_edition_kind_ids:
           type: array
           items:
             type: integer
             format: uint32
       required:
-        - movie_edition_kind_ids
+        - data_source
 
     PostCardRequest:
       type: object
       properties:
         movie:
-          $ref: '#/components/schemas/PostCardMovie'
+          $ref: '#/components/schemas/MoviePost'
 
     PatchCardRequest:
       type: object
