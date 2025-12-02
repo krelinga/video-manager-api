@@ -29,7 +29,7 @@ jobs:
 
       - name: Initialize Go module and create directory structure
         run: |
-          mkdir -p go/vmapi/vmserver go/vmapi/vmclient
+          mkdir -p go/vmapi/vmtypes go/vmapi/vmserver go/vmapi/vmclient
           cd go/vmapi
           if [ ! -f go.mod ]; then
             go mod init github.com/krelinga/video-manager-api/go/vmapi
@@ -38,11 +38,11 @@ jobs:
 
       - name: Generate Go types
         run: |
-          cd go/vmapi
-          oapi-codegen -config ../../config/types.yml ../../types.yml
+          cd go/vmapi/vmtypes
+          oapi-codegen -config ../../../config/types.yml ../../../types.yml
           echo "Generated types:"
           cat types.gen.go
-          cd ../..
+          cd ../../..
 
       - name: Generate Go server
         run: |
@@ -51,7 +51,7 @@ jobs:
           echo "Generated server code:"
           wc -l server.gen.go
           head -20 server.gen.go
-          cd ../../../
+          cd ../../..
 
       - name: Generate Go client
         run: |

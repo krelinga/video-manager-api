@@ -5,4 +5,4 @@ generate:
   models: true
   client: true
 import-mapping:
-  types.yml: github.com/krelinga/video-manager-api/go/vmapi
+  types.yml: github.com/krelinga/video-manager-api/go/vmapi/vmtypes
