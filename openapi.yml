@@ -16,4 +16,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/HelloResponse'
+                $ref: 'types.yml#/components/schemas/GetHelloResponse'
