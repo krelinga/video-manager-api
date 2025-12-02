@@ -1,0 +1,46 @@
+name: Generate Go Client & Server from OpenAPI
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - openapi.yml
+
+jobs:
+  generate-go-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install oapi-codegen
+        run: |
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+      - name: Create go directory
+        run: |
+          mkdir -p go && mkdir -p go/vmserver && mkdir -p go/vmclient
+
+      - name: Generate Go types
+        run: |
+          oapi-codegen -generate types -o go/types.gen.go -package vmapi openapi.yml
+
+      - name: Generate Go server
+        run: |
+          oapi-codegen -generate server,spec -o go/vmserver/server.gen.go -package vmserver openapi.yml
+      - name: Generate Go client
+        run: |
+          oapi-codegen -generate client -o go/vmclient/client.gen.go -package vmclient openapi.yml
+
+      - name: Commit generated code
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add go/*.gen.go
+          git commit -m "Auto-generate Go client & server from OpenAPI spec" || echo "No changes to commit"
+          git push
