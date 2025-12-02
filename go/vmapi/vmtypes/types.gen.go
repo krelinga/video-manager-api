@@ -31,23 +31,6 @@ type CardPatch struct {
 	Year  *uint32     `json:"year,omitempty"`
 }
 
-// CardResponse defines model for CardResponse.
-type CardResponse struct {
-	Card Card `json:"card"`
-}
-
-// ListCardsResponse defines model for ListCardsResponse.
-type ListCardsResponse struct {
-	Cards         []Card  `json:"cards"`
-	NextPageToken *string `json:"next_page_token,omitempty"`
-}
-
-// ListMovieEditionKindsResponse defines model for ListMovieEditionKindsResponse.
-type ListMovieEditionKindsResponse struct {
-	MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
-	NextPageToken     *string            `json:"next_page_token,omitempty"`
-}
-
 // Movie defines model for Movie.
 type Movie struct {
 	Editions *[]MovieEdition `json:"editions,omitempty"`
@@ -75,11 +58,6 @@ type MovieEditionKindPatch struct {
 	Name      *string `json:"name,omitempty"`
 }
 
-// MovieEditionKindResponse defines model for MovieEditionKindResponse.
-type MovieEditionKindResponse struct {
-	MovieEditionKind MovieEditionKind `json:"movie_edition_kind"`
-}
-
 // MoviePatch Patch object with only one field set per instance
 type MoviePatch struct {
 	AddMovieEditionKindId *uint32 `json:"add_movie_edition_kind_id,omitempty"`
@@ -100,42 +78,19 @@ type MoviePostDataSource struct {
 	TmdbMovieId *uint64 `json:"tmdb_movie_id,omitempty"`
 }
 
-// PatchCardRequest defines model for PatchCardRequest.
-type PatchCardRequest struct {
-	Patches []CardPatch `json:"patches"`
-}
-
-// PatchMovieEditionKindRequest defines model for PatchMovieEditionKindRequest.
-type PatchMovieEditionKindRequest struct {
-	Patches []MovieEditionKindPatch `json:"patches"`
-}
-
-// PostCardRequest defines model for PostCardRequest.
-type PostCardRequest struct {
-	Movie *MoviePost `json:"movie,omitempty"`
-}
-
-// PostMovieEditionKindRequest defines model for PostMovieEditionKindRequest.
-type PostMovieEditionKindRequest struct {
-	IsDefault *bool  `json:"is_default,omitempty"`
-	Name      string `json:"name"`
-}
-
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RWTW/UMBD9K5bhGG0LRRxyQ4UDKhUVIC6oimbjya5p4kntSWFV7X9Hdralmzhp9qOn",
-	"XTnjmffmvUzmXuZU1WTQsJPpvXT5EisIf8/BKv9bW6rRssZwqsNZQbYClqlstOGztzKRvKpRplIbxgVa",
-	"uU5kRXcaffBri4VM5auT/6VONnVOLkPQOpEGqhC8yePYarPwD1YIdlrJdSIt3jbaopLpL4/0+jGI5r8x",
-	"Z5/P07oCzpc+qUKXW12zJiNTGY5FGyr+aF4KMuVKkEFRaCyVcMiiRiu0cQwmR5l0ujOdcwvhaMSjNL+h",
-	"q8k47KuYb7Qdgxn07zY1XIy19Yt27G+48aKthxgrN638YyWwFlahX/iXsxoWmDHdoIm0LgLZDWIOYnxS",
-	"2lvgQpsx/EHcDNvY7MYHT2bTLXMUZjFAMZ6XD67c5rO5uB+JGIECDFjO2hHR8/P0ycGVmmeR8Pfv9n7r",
-	"t6AfMNR8k3fXuo9xk+k5qBebcvvC1S5TWEBT8hNJ5kQlghkZPjG8IXQr4xTwLzZp92f2LOZdJsDBXoik",
-	"HOzrizUTlMr6QLLpPht/8y1WdIedCi83DgaaR477iipgyBw1Np/42SbHH4Hhe3vlYc3p9m17pk4iuTVL",
-	"OyZ5ivJ6jOATaD2b+GeiTSIKsiK3CKzNQoAIHGZCfO34ZklNqcQcvYNmPdcEXVr6h6gT7NuuK7cNxkSq",
-	"fQTutjo87lejjX3IfD2Eqz8bjoQxPigPwkvtBjYIcYfl1L8rcbGovzINFjzO1ydE9Qn7MG0K6hv9x6pG",
-	"obDQpt1vgtt5ieKnVkjiEgws0IpzYChpIT5cffbeZs2lzz8YJHxeJxN5h9a1ld7MTmenngnVaKDWMpVn",
-	"4SjxSi2dTE1Tlut/AQAA///ifTspZQ0AAA==",
+	"H4sIAAAAAAAC/7SVQW/TTBCG/8povu9opYUiDr6hwgFVFZVAXFBlTbzjeMHeNbPjoKjKf0e7TmkSp8EE",
+	"cmozHs8878y76wcsfdt5x04D5g8YyppbSv9ek5j4txPfsajlFLUpVnlpSTHH3jq9eokZ6qpjzNE65QUL",
+	"rjNs/dJyTP5fuMIc/7t4anWx6XNxm5LWGTpqU/KmTlCxbhEfrJhkWst1hsLfeytsMP8SSe9/Jfn5Vy41",
+	"1ouy7kjLOhY1HEqxnVrvMMcUhiEVflitwbtmBd4xVJYbA4EVOhawLii5kjHbm850zQPCPxM+knn7SLIL",
+	"yMZGscMqldswCfbd8BY+NSIRWsXfFTkSLQZbjDRMd4u2Zl4cSH/96uRN76D/hZG/WWf+ZEw3Mf8A46bS",
+	"71BvNu1OxbWhMFxR3+jWSubeN0zuiOEO8abUnYpT4M92uk5Xdpj5bKBkTJGugmJz3oq4+WL6Do+fKuHW",
+	"L3mvw/mO2jPD80HHNjWkVATfSznxGvRB35LSx+GVx8/G/tx276tJInfuqT1zb1PeHxO4hTaySXwGQxGo",
+	"vEApTGrdAgiShhnAhz3f1L5vDMw5Omg2ck3ayyD/9O3EkHWVH/N+WnUMhivrhk9Agtaa4bM17OGWHC1Y",
+	"4JqUGr+AN3fvI6JabWL9Z5Mg1g2Y4ZIlDJ1ezC5nl3GOvmNHncUcr1Iow460Dpi7vmnWPwMAAP//MQMF",
+	"inwIAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

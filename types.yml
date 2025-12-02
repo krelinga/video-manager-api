@@ -31,46 +31,6 @@ components:
         is_default:
           type: boolean
 
-    ListMovieEditionKindsResponse:
-      type: object
-      properties:
-        movie_edition_kinds:
-          type: array
-          items:
-            $ref: '#/components/schemas/MovieEditionKind'
-        next_page_token:
-          type: string
-      required:
-        - movie_edition_kinds
-
-    MovieEditionKindResponse:
-      type: object
-      properties:
-        movie_edition_kind:
-          $ref: '#/components/schemas/MovieEditionKind'
-      required:
-        - movie_edition_kind
-
-    PostMovieEditionKindRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        is_default:
-          type: boolean
-      required:
-        - name
-
-    PatchMovieEditionKindRequest:
-      type: object
-      properties:
-        patches:
-          type: array
-          items:
-            $ref: '#/components/schemas/MovieEditionKindPatch'
-      required:
-        - patches
-
     # MovieEdition types
     MovieEdition:
       type: object
@@ -148,26 +108,6 @@ components:
         movie:
           $ref: '#/components/schemas/MoviePatch'
 
-    ListCardsResponse:
-      type: object
-      properties:
-        cards:
-          type: array
-          items:
-            $ref: '#/components/schemas/Card'
-        next_page_token:
-          type: string
-      required:
-        - cards
-
-    CardResponse:
-      type: object
-      properties:
-        card:
-          $ref: '#/components/schemas/Card'
-      required:
-        - card
-
     MoviePostDataSource:
       type: object
       description: Data source for creating a movie.  Only one field should be set.
@@ -188,19 +128,3 @@ components:
             format: uint32
       required:
         - data_source
-
-    PostCardRequest:
-      type: object
-      properties:
-        movie:
-          $ref: '#/components/schemas/MoviePost'
-
-    PatchCardRequest:
-      type: object
-      properties:
-        patches:
-          type: array
-          items:
-            $ref: '#/components/schemas/CardPatch'
-      required:
-        - patches
