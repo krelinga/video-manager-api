@@ -20,35 +20,46 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.22'
 
       - name: Install oapi-codegen
         run: |
           go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 
-      - name: Create go directory structure
+      - name: Initialize Go module and create directory structure
         run: |
-          mkdir -p go/vmserver go/vmclient
+          mkdir -p go/vmapi/vmserver go/vmapi/vmclient
+          cd go
+          if [ ! -f go.mod ]; then
+            go mod init github.com/krelinga/video-manager-api/go/vmapi
+          fi
+          cd ..
 
       - name: Generate Go types
         run: |
-          oapi-codegen -generate types -o go/types.gen.go -package vmapi openapi.yml
+          cd go/vmapi
+          oapi-codegen -generate types -o types.gen.go -package vmapi ../../openapi.yml
           echo "Generated types:"
-          cat go/types.gen.go
+          cat types.gen.go
+          cd ../..
 
       - name: Generate Go server
         run: |
-          oapi-codegen -generate server,spec -o go/vmserver/server.gen.go -package vmserver openapi.yml
+          cd go/vmapi/vmserver
+          oapi-codegen -generate std-http-server,spec -o vmserver/server.gen.go -package vmserver ../../../openapi.yml
           echo "Generated server code:"
-          wc -l go/vmserver/server.gen.go
-          head -20 go/vmserver/server.gen.go
+          wc -l vmserver/server.gen.go
+          head -20 vmserver/server.gen.go
+          cd ../../../
 
       - name: Generate Go client
         run: |
-          oapi-codegen -generate client -o go/vmclient/client.gen.go -package vmclient openapi.yml
+          cd go/vmapi/vmclient
+          oapi-codegen -generate client -o client.gen.go -package vmclient ../../../openapi.yml
           echo "Generated client code:"
-          wc -l go/vmclient/client.gen.go
-          head -20 go/vmclient/client.gen.go
+          wc -l client.gen.go
+          head -20 client.gen.go
+          cd ../../..
 
       - name: Commit generated code
         run: |
