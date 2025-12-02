@@ -22,11 +22,6 @@ import (
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
-// HelloResponse defines model for HelloResponse.
-type HelloResponse struct {
-	Message string `json:"message"`
-}
-
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Returns a hello world message
@@ -189,7 +184,7 @@ type GetHelloResponseObject interface {
 	VisitGetHelloResponse(w http.ResponseWriter) error
 }
 
-type GetHello200JSONResponse HelloResponse
+type GetHello200JSONResponse externalRef0.HelloResponse
 
 func (response GetHello200JSONResponse) VisitGetHelloResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -261,12 +256,12 @@ func (sh *strictHandler) GetHello(w http.ResponseWriter, r *http.Request) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/3xRsY7bMAz9FfW1oxG77XLQlqnNdrgOHQ43qDIT6yBLqki3PQT+94JymiBLJxIk33vk",
-	"4xk+zyUnSsKwZ7CfaHYt/Uox5ifikhOTFkrNhaoEau2ZmN2pNeiPm0sk2A3Tmd+5xvEdOshb0TJLDemE",
-	"de1Q6ecSKo2wz1eKl+tg/vFKXrDqZEjHrOwjsa+hSMgJFnvDQcXM/vFgZHJiKslSExtnJlXfxM2Fe6dL",
-	"BLktZ7639v7xgA6/qPJG+3E37AasHXKh5EqAxedW6lCcTO3ivvFrdiLRoHY43eswwuILSVOAHrm51mCf",
-	"hkGDz0koNZwrJQbfkP0rq/4/4zX7UOkIi/f97TP95S39/U+aTff2fFu8J+bjEk29jXXgZZ5dfYPF0//s",
-	"2iiZqjoD+3zGUiMsJpFi+z5m7+KUWezD8DBgfVn/BgAA//8zifCvQAIAAA==",
+	"H4sIAAAAAAAC/3xRTY/TMBD9K+bBMWoCXCrfeoLeqnLgUFXIONPGlWMbzwSoqvx3ZKe0Wmm1J48872Pm",
+	"zQ02jikGCsLQN7AdaDS1lGsi/vGVvI974hQDU/lOOSbK4qiCRmI259qgv2ZMnqBROY36E7Pv36GpStBg",
+	"yS6cMc8NMv2aXKYe+vCQOD6A8eeFrGAuSBdOsaj3xDa7JC4GaGwUu2KmNrutksGIyiRTDqyMGor7Yq7u",
+	"2qsyhJPncOp7bW92WzT4TZkX2Y+rbtVhbhATBZMcND7XrwbJyFA3bqt+qc4k5SlxmDLXtofGF5LqgLLk",
+	"klqlfeq68tgYhELlmZS8s5XZXrj4/4+/VB8ynaDxvn3ep70fp33tMjWslyF9m6wl5tPkVX7CGvA0jiZf",
+	"obF/K7RFkimXfKAPN0zZQ2MQSbptfbTGD5FFr7t1h/k4/wsAAP//ILoPxEwCAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
@@ -306,7 +301,7 @@ func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
 		res[pathToFile] = rawSpec
 	}
 
-	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(path.Dir(pathToFile), "../../../openapi.yml")) {
+	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(path.Dir(pathToFile), "types.yml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}
