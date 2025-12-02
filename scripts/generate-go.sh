@@ -21,7 +21,7 @@ echo "==> Generating Go types..."
 cd go/vmapi/vmtypes
 oapi-codegen -config ../../../config/types.yml ../../../types.yml
 echo "Generated types:"
-cat types.gen.go
+wc -l types.gen.go
 cd ../../..
 
 echo "==> Generating Go server..."
@@ -29,7 +29,6 @@ cd go/vmapi/vmserver
 oapi-codegen -config ../../../config/server.yml ../../../openapi.yml
 echo "Generated server code:"
 wc -l server.gen.go
-head -20 server.gen.go
 cd ../../..
 
 echo "==> Generating Go client..."
@@ -37,7 +36,6 @@ cd go/vmapi/vmclient
 oapi-codegen -config ../../../config/client.yml ../../../openapi.yml
 echo "Generated client code:"
 wc -l client.gen.go
-head -20 client.gen.go
 cd ../../..
 
 echo "==> Updating go.mod..."
