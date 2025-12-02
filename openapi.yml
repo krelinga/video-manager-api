@@ -9,14 +9,22 @@ paths:
   /hello:
     get:
       summary: Returns a hello world message
+      operationId: getHello
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Hello, world!
+                $ref: '#/components/schemas/HelloResponse'
+
+components:
+  schemas:
+    HelloResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Hello, world!

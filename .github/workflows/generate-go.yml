@@ -26,29 +26,40 @@ jobs:
         run: |
           go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 
-      - name: Create go directory
+      - name: Create go directory structure
         run: |
-          mkdir -p go && mkdir -p go/vmserver && mkdir -p go/vmclient
+          mkdir -p go/vmserver go/vmclient
 
       - name: Generate Go types
         run: |
           oapi-codegen -generate types -o go/types.gen.go -package vmapi openapi.yml
+          echo "Generated types:"
+          cat go/types.gen.go
 
       - name: Generate Go server
         run: |
           oapi-codegen -generate server,spec -o go/vmserver/server.gen.go -package vmserver openapi.yml
+          echo "Generated server code:"
+          wc -l go/vmserver/server.gen.go
+          head -20 go/vmserver/server.gen.go
+
       - name: Generate Go client
         run: |
           oapi-codegen -generate client -o go/vmclient/client.gen.go -package vmclient openapi.yml
+          echo "Generated client code:"
+          wc -l go/vmclient/client.gen.go
+          head -20 go/vmclient/client.gen.go
 
       - name: Commit generated code
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add go/*.gen.go
+          git add go/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
+            echo "Committing generated files:"
+            git status --porcelain
             git commit -m "Auto-generate Go client & server from OpenAPI spec"
             git push
           fi
