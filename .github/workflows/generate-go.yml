@@ -38,7 +38,7 @@ jobs:
       - name: Generate Go types
         run: |
           cd go/vmapi
-          oapi-codegen -generate types -o types.gen.go -package vmapi ../../types.yml ../../openapi.yml
+          oapi-codegen -generate types -o types.gen.go -package vmapi ../../openapi.yml
           echo "Generated types:"
           cat types.gen.go
           cd ../..
