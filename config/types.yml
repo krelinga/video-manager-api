@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
+package: vmapi
+output: types.gen.go
+generate:
+  types: true
+output-options:
+  # NOTE that this is only required for the `Unreferenced` type
+  skip-prune: true

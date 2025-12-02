@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "*.yml"
+      - "config/*.yml"
 
 jobs:
   generate-go-code:
@@ -38,7 +39,7 @@ jobs:
       - name: Generate Go types
         run: |
           cd go/vmapi
-          oapi-codegen -generate types -o types.gen.go -package vmapi -output-options skip-prune ../../types.yml
+          oapi-codegen -config ../../config/types.yml ../../types.yml
           echo "Generated types:"
           cat types.gen.go
           cd ../..
