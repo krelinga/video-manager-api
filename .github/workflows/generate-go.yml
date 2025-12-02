@@ -46,7 +46,7 @@ jobs:
       - name: Generate Go server
         run: |
           cd go/vmapi/vmserver
-          oapi-codegen -generate std-http-server,strict-server,spec,types -o server.gen.go -package vmserver ../../../openapi.yml
+          oapi-codegen -generate std-http-server,strict-server,spec,types -o server.gen.go -package vmserver -import-mapping ../../../openapi.yml:github.com/krelinga/video-manager-api/go/vmapi -alias-types ../../../openapi.yml
           echo "Generated server code:"
           wc -l server.gen.go
           head -20 server.gen.go
