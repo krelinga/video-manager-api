@@ -3,6 +3,7 @@ package: vmapi
 output: types.gen.go
 generate:
   models: true
+  embedded-spec: true
 output-options:
   # NOTE that this is only required for the `Unreferenced` type
   skip-prune: true
