@@ -21,6 +21,11 @@ import (
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
+// HelloResponse defines model for HelloResponse.
+type HelloResponse struct {
+	Message string `json:"message"`
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Returns a hello world message
