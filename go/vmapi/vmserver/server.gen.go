@@ -184,7 +184,7 @@ type GetHelloResponseObject interface {
 	VisitGetHelloResponse(w http.ResponseWriter) error
 }
 
-type GetHello200JSONResponse externalRef0.HelloResponse
+type GetHello200JSONResponse externalRef0.GetHelloResponse
 
 func (response GetHello200JSONResponse) VisitGetHelloResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -256,12 +256,12 @@ func (sh *strictHandler) GetHello(w http.ResponseWriter, r *http.Request) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/3xRTY/TMBD9K+bBMWoCXCrfeoLeqnLgUFXIONPGlWMbzwSoqvx3ZKe0Wmm1J48872Pm",
-	"zQ02jikGCsLQN7AdaDS1lGsi/vGVvI974hQDU/lOOSbK4qiCRmI259qgv2ZMnqBROY36E7Pv36GpStBg",
-	"yS6cMc8NMv2aXKYe+vCQOD6A8eeFrGAuSBdOsaj3xDa7JC4GaGwUu2KmNrutksGIyiRTDqyMGor7Yq7u",
-	"2qsyhJPncOp7bW92WzT4TZkX2Y+rbtVhbhATBZMcND7XrwbJyFA3bqt+qc4k5SlxmDLXtofGF5LqgLLk",
-	"klqlfeq68tgYhELlmZS8s5XZXrj4/4+/VB8ynaDxvn3ep70fp33tMjWslyF9m6wl5tPkVX7CGvA0jiZf",
-	"obF/K7RFkimXfKAPN0zZQ2MQSbptfbTGD5FFr7t1h/k4/wsAAP//ILoPxEwCAAA=",
+	"H4sIAAAAAAAC/3xRPQ/TMBD9K+bBGDUBlspbJ+hWlYGhqpBxro0rxza+C1BV+e/ITj/EAJNPvnvv3b13",
+	"g41jioGCMPQNbAcaTS3lmoi/fSL5TN7HPXGKgal0Uo6JsjiqcyMxm3Nt0G8zJk/QqJhG/YrZ92/QVDJo",
+	"sGQXzpjnBpl+TC5TD314Uhyfg/H7haxgLpMunGJh74ltdklcDNDYKHZFTG12WyWDEZVJphxYGTUU9UVc",
+	"3blXZQknr+XU19re7LZo8JMyL7TvV92qw9wgJgomOWh8rF8NkpGhXtxW/lKdScpT7DBlr20PjYdlKEcu",
+	"rlXYh64rj41BKFScSck7W5HthYv+I4FSvct0gsbb9hVRe8+n/Uc41a+/ffoyWUvMp8mr/BprwNM4mnyF",
+	"xv5/vi2UTLlYBH24YcoeGoNI0m3rozV+iCx63a07zMf5TwAAAP//sDmrGFICAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

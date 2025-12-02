@@ -181,7 +181,7 @@ type ClientWithResponsesInterface interface {
 type GetHelloResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.HelloResponse
+	JSON200      *externalRef0.GetHelloResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -224,7 +224,7 @@ func ParseGetHelloResponse(rsp *http.Response) (*GetHelloResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.HelloResponse
+		var dest externalRef0.GetHelloResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
