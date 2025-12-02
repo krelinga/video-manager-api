@@ -1,0 +1,16 @@
+openapi: 3.0.0
+info:
+  title: API Types
+  version: 1.0.0
+  description: Type definitions for the Hello World API.
+
+components:
+  schemas:
+    HelloResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Hello, world!
