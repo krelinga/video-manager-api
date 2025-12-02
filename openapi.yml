@@ -1,19 +1,216 @@
 openapi: 3.0.0
 info:
-  title: Hello World API
+  title: Video Manager Catalog API
   version: 1.0.0
-  description: A simple API that returns a hello world message.
+  description: REST API for managing movie edition kinds and cards in the video catalog.
 servers:
   - url: http://localhost:8080
+
 paths:
-  /hello:
+  # MovieEditionKind endpoints
+  /movie-edition-kinds:
     get:
-      summary: Returns a hello world message
-      operationId: getHello
+      summary: List movie edition kinds
+      operationId: listMovieEditionKinds
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/GetHelloResponse'
+                $ref: 'types.yml#/components/schemas/ListMovieEditionKindsResponse'
+    post:
+      summary: Create a new movie edition kind
+      operationId: postMovieEditionKind
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'types.yml#/components/schemas/PostMovieEditionKindRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/MovieEditionKindResponse'
+
+  /movie-edition-kinds/{id}:
+    get:
+      summary: Get a movie edition kind by ID
+      operationId: getMovieEditionKind
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/MovieEditionKindResponse'
+        '404':
+          description: Not found
+    patch:
+      summary: Update a movie edition kind
+      operationId: patchMovieEditionKind
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'types.yml#/components/schemas/PatchMovieEditionKindRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/MovieEditionKindResponse'
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a movie edition kind
+      operationId: deleteMovieEditionKind
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Not found
+
+  # Card endpoints
+  /cards:
+    get:
+      summary: List cards
+      operationId: listCards
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/ListCardsResponse'
+    post:
+      summary: Create a new card
+      operationId: postCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'types.yml#/components/schemas/PostCardRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/CardResponse'
+
+  /cards/{id}:
+    get:
+      summary: Get a card by ID
+      operationId: getCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/CardResponse'
+        '404':
+          description: Not found
+    patch:
+      summary: Update a card
+      operationId: patchCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'types.yml#/components/schemas/PatchCardRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: 'types.yml#/components/schemas/CardResponse'
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a card
+      operationId: deleteCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Not found

@@ -1,16 +1,199 @@
 openapi: 3.0.0
 info:
-  title: API Types
+  title: Video Manager Catalog API Types
   version: 1.0.0
-  description: Type definitions for the Hello World API.
+  description: Type definitions for the Video Manager Catalog API.
 
 components:
   schemas:
-    GetHelloResponse:
+    # MovieEditionKind types
+    MovieEditionKind:
       type: object
-      required:
-        - message
       properties:
-        message:
+        id:
+          type: integer
+          format: uint32
+        name:
           type: string
-          example: Hello, world!
+        is_default:
+          type: boolean
+      required:
+        - id
+        - name
+        - is_default
+
+    MovieEditionKindPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        is_default:
+          type: boolean
+
+    ListMovieEditionKindsResponse:
+      type: object
+      properties:
+        movie_edition_kinds:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieEditionKind'
+        next_page_token:
+          type: string
+      required:
+        - movie_edition_kinds
+
+    MovieEditionKindResponse:
+      type: object
+      properties:
+        movie_edition_kind:
+          $ref: '#/components/schemas/MovieEditionKind'
+      required:
+        - movie_edition_kind
+
+    PostMovieEditionKindRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        is_default:
+          type: boolean
+      required:
+        - name
+
+    PatchMovieEditionKindRequest:
+      type: object
+      properties:
+        patches:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieEditionKindPatch'
+      required:
+        - patches
+
+    # MovieEdition types
+    MovieEdition:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        kind:
+          $ref: '#/components/schemas/MovieEditionKind'
+      required:
+        - id
+        - kind
+
+    # Movie types
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        tmdb_id:
+          type: integer
+          format: uint64
+        fanart_id:
+          type: string
+        editions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieEdition'
+      required:
+        - id
+
+    MoviePatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        tmdb_id:
+          type: integer
+          format: uint64
+        fanart_id:
+          type: string
+        add_movie_edition_kind_id:
+          type: integer
+          format: uint32
+        remove_movie_edition_id:
+          type: integer
+          format: uint32
+
+    # Card types
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        name:
+          type: string
+        year:
+          type: integer
+          format: uint32
+        movie:
+          $ref: '#/components/schemas/Movie'
+      required:
+        - id
+
+    CardPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        year:
+          type: integer
+          format: uint32
+        movie:
+          $ref: '#/components/schemas/MoviePatch'
+
+    ListCardsResponse:
+      type: object
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+        next_page_token:
+          type: string
+      required:
+        - cards
+
+    CardResponse:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/Card'
+      required:
+        - card
+
+    PostCardMovie:
+      type: object
+      properties:
+        tmdb_movie_id:
+          type: integer
+          format: uint64
+        movie_edition_kind_ids:
+          type: array
+          items:
+            type: integer
+            format: uint32
+      required:
+        - movie_edition_kind_ids
+
+    PostCardRequest:
+      type: object
+      properties:
+        movie:
+          $ref: '#/components/schemas/PostCardMovie'
+
+    PatchCardRequest:
+      type: object
+      properties:
+        patches:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardPatch'
+      required:
+        - patches
