@@ -38,7 +38,7 @@ jobs:
       - name: Generate Go types
         run: |
           cd go/vmapi
-          oapi-codegen -generate types -o types.gen.go -package vmapi ../../types.yml
+          oapi-codegen -generate types -o types.gen.go -package vmapi ../../types.yml ../../openapi.yml
           echo "Generated types:"
           cat types.gen.go
           cd ../..
@@ -60,6 +60,12 @@ jobs:
           wc -l client.gen.go
           head -20 client.gen.go
           cd ../../..
+
+      - name: Update go.mod
+        run: |
+          cd go/vmapi
+          go mod tidy
+          cd ../..
 
       - name: Commit generated code
         run: |
