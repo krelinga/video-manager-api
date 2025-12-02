@@ -19,14 +19,72 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	externalRef0 "github.com/krelinga/video-manager-api/go/vmapi/vmtypes"
+	"github.com/oapi-codegen/runtime"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
+// ListCardsParams defines parameters for ListCards.
+type ListCardsParams struct {
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
+
+// ListMovieEditionKindsParams defines parameters for ListMovieEditionKinds.
+type ListMovieEditionKindsParams struct {
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
+
+// PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
+type PostCardJSONRequestBody = externalRef0.PostCardRequest
+
+// PatchCardJSONRequestBody defines body for PatchCard for application/json ContentType.
+type PatchCardJSONRequestBody = externalRef0.PatchCardRequest
+
+// PostMovieEditionKindJSONRequestBody defines body for PostMovieEditionKind for application/json ContentType.
+type PostMovieEditionKindJSONRequestBody = externalRef0.PostMovieEditionKindRequest
+
+// PatchMovieEditionKindJSONRequestBody defines body for PatchMovieEditionKind for application/json ContentType.
+type PatchMovieEditionKindJSONRequestBody = externalRef0.PatchMovieEditionKindRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Returns a hello world message
-	// (GET /hello)
-	GetHello(w http.ResponseWriter, r *http.Request)
+	// List cards
+	// (GET /cards)
+	ListCards(w http.ResponseWriter, r *http.Request, params ListCardsParams)
+	// Create a new card
+	// (POST /cards)
+	PostCard(w http.ResponseWriter, r *http.Request)
+	// Delete a card
+	// (DELETE /cards/{id})
+	DeleteCard(w http.ResponseWriter, r *http.Request, id uint32)
+	// Get a card by ID
+	// (GET /cards/{id})
+	GetCard(w http.ResponseWriter, r *http.Request, id uint32)
+	// Update a card
+	// (PATCH /cards/{id})
+	PatchCard(w http.ResponseWriter, r *http.Request, id uint32)
+	// List movie edition kinds
+	// (GET /movie-edition-kinds)
+	ListMovieEditionKinds(w http.ResponseWriter, r *http.Request, params ListMovieEditionKindsParams)
+	// Create a new movie edition kind
+	// (POST /movie-edition-kinds)
+	PostMovieEditionKind(w http.ResponseWriter, r *http.Request)
+	// Delete a movie edition kind
+	// (DELETE /movie-edition-kinds/{id})
+	DeleteMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
+	// Get a movie edition kind by ID
+	// (GET /movie-edition-kinds/{id})
+	GetMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
+	// Update a movie edition kind
+	// (PATCH /movie-edition-kinds/{id})
+	PatchMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -38,11 +96,245 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// GetHello operation middleware
-func (siw *ServerInterfaceWrapper) GetHello(w http.ResponseWriter, r *http.Request) {
+// ListCards operation middleware
+func (siw *ServerInterfaceWrapper) ListCards(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListCardsParams
+
+	// ------------- Optional query parameter "page_size" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "page_token" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_token", r.URL.Query(), &params.PageToken)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_token", Err: err})
+		return
+	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetHello(w, r)
+		siw.Handler.ListCards(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostCard operation middleware
+func (siw *ServerInterfaceWrapper) PostCard(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCard(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteCard operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCard(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteCard(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetCard operation middleware
+func (siw *ServerInterfaceWrapper) GetCard(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCard(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PatchCard operation middleware
+func (siw *ServerInterfaceWrapper) PatchCard(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PatchCard(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListMovieEditionKinds operation middleware
+func (siw *ServerInterfaceWrapper) ListMovieEditionKinds(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListMovieEditionKindsParams
+
+	// ------------- Optional query parameter "page_size" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "page_token" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_token", r.URL.Query(), &params.PageToken)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_token", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListMovieEditionKinds(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostMovieEditionKind operation middleware
+func (siw *ServerInterfaceWrapper) PostMovieEditionKind(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostMovieEditionKind(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteMovieEditionKind operation middleware
+func (siw *ServerInterfaceWrapper) DeleteMovieEditionKind(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteMovieEditionKind(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMovieEditionKind operation middleware
+func (siw *ServerInterfaceWrapper) GetMovieEditionKind(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMovieEditionKind(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PatchMovieEditionKind operation middleware
+func (siw *ServerInterfaceWrapper) PatchMovieEditionKind(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PatchMovieEditionKind(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -172,32 +464,270 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
-	m.HandleFunc("GET "+options.BaseURL+"/hello", wrapper.GetHello)
+	m.HandleFunc("GET "+options.BaseURL+"/cards", wrapper.ListCards)
+	m.HandleFunc("POST "+options.BaseURL+"/cards", wrapper.PostCard)
+	m.HandleFunc("DELETE "+options.BaseURL+"/cards/{id}", wrapper.DeleteCard)
+	m.HandleFunc("GET "+options.BaseURL+"/cards/{id}", wrapper.GetCard)
+	m.HandleFunc("PATCH "+options.BaseURL+"/cards/{id}", wrapper.PatchCard)
+	m.HandleFunc("GET "+options.BaseURL+"/movie-edition-kinds", wrapper.ListMovieEditionKinds)
+	m.HandleFunc("POST "+options.BaseURL+"/movie-edition-kinds", wrapper.PostMovieEditionKind)
+	m.HandleFunc("DELETE "+options.BaseURL+"/movie-edition-kinds/{id}", wrapper.DeleteMovieEditionKind)
+	m.HandleFunc("GET "+options.BaseURL+"/movie-edition-kinds/{id}", wrapper.GetMovieEditionKind)
+	m.HandleFunc("PATCH "+options.BaseURL+"/movie-edition-kinds/{id}", wrapper.PatchMovieEditionKind)
 
 	return m
 }
 
-type GetHelloRequestObject struct {
+type ListCardsRequestObject struct {
+	Params ListCardsParams
 }
 
-type GetHelloResponseObject interface {
-	VisitGetHelloResponse(w http.ResponseWriter) error
+type ListCardsResponseObject interface {
+	VisitListCardsResponse(w http.ResponseWriter) error
 }
 
-type GetHello200JSONResponse externalRef0.GetHelloResponse
+type ListCards200JSONResponse externalRef0.ListCardsResponse
 
-func (response GetHello200JSONResponse) VisitGetHelloResponse(w http.ResponseWriter) error {
+func (response ListCards200JSONResponse) VisitListCardsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PostCardRequestObject struct {
+	Body *PostCardJSONRequestBody
+}
+
+type PostCardResponseObject interface {
+	VisitPostCardResponse(w http.ResponseWriter) error
+}
+
+type PostCard201JSONResponse externalRef0.CardResponse
+
+func (response PostCard201JSONResponse) VisitPostCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCardRequestObject struct {
+	Id uint32 `json:"id"`
+}
+
+type DeleteCardResponseObject interface {
+	VisitDeleteCardResponse(w http.ResponseWriter) error
+}
+
+type DeleteCard204Response struct {
+}
+
+func (response DeleteCard204Response) VisitDeleteCardResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteCard404Response struct {
+}
+
+func (response DeleteCard404Response) VisitDeleteCardResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
+type GetCardRequestObject struct {
+	Id uint32 `json:"id"`
+}
+
+type GetCardResponseObject interface {
+	VisitGetCardResponse(w http.ResponseWriter) error
+}
+
+type GetCard200JSONResponse externalRef0.CardResponse
+
+func (response GetCard200JSONResponse) VisitGetCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetCard404Response struct {
+}
+
+func (response GetCard404Response) VisitGetCardResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
+type PatchCardRequestObject struct {
+	Id   uint32 `json:"id"`
+	Body *PatchCardJSONRequestBody
+}
+
+type PatchCardResponseObject interface {
+	VisitPatchCardResponse(w http.ResponseWriter) error
+}
+
+type PatchCard200JSONResponse externalRef0.CardResponse
+
+func (response PatchCard200JSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchCard404Response struct {
+}
+
+func (response PatchCard404Response) VisitPatchCardResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
+type ListMovieEditionKindsRequestObject struct {
+	Params ListMovieEditionKindsParams
+}
+
+type ListMovieEditionKindsResponseObject interface {
+	VisitListMovieEditionKindsResponse(w http.ResponseWriter) error
+}
+
+type ListMovieEditionKinds200JSONResponse externalRef0.ListMovieEditionKindsResponse
+
+func (response ListMovieEditionKinds200JSONResponse) VisitListMovieEditionKindsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostMovieEditionKindRequestObject struct {
+	Body *PostMovieEditionKindJSONRequestBody
+}
+
+type PostMovieEditionKindResponseObject interface {
+	VisitPostMovieEditionKindResponse(w http.ResponseWriter) error
+}
+
+type PostMovieEditionKind201JSONResponse externalRef0.MovieEditionKindResponse
+
+func (response PostMovieEditionKind201JSONResponse) VisitPostMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteMovieEditionKindRequestObject struct {
+	Id uint32 `json:"id"`
+}
+
+type DeleteMovieEditionKindResponseObject interface {
+	VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error
+}
+
+type DeleteMovieEditionKind204Response struct {
+}
+
+func (response DeleteMovieEditionKind204Response) VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteMovieEditionKind404Response struct {
+}
+
+func (response DeleteMovieEditionKind404Response) VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
+type GetMovieEditionKindRequestObject struct {
+	Id uint32 `json:"id"`
+}
+
+type GetMovieEditionKindResponseObject interface {
+	VisitGetMovieEditionKindResponse(w http.ResponseWriter) error
+}
+
+type GetMovieEditionKind200JSONResponse externalRef0.MovieEditionKindResponse
+
+func (response GetMovieEditionKind200JSONResponse) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetMovieEditionKind404Response struct {
+}
+
+func (response GetMovieEditionKind404Response) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
+type PatchMovieEditionKindRequestObject struct {
+	Id   uint32 `json:"id"`
+	Body *PatchMovieEditionKindJSONRequestBody
+}
+
+type PatchMovieEditionKindResponseObject interface {
+	VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error
+}
+
+type PatchMovieEditionKind200JSONResponse externalRef0.MovieEditionKindResponse
+
+func (response PatchMovieEditionKind200JSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchMovieEditionKind404Response struct {
+}
+
+func (response PatchMovieEditionKind404Response) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
-	// Returns a hello world message
-	// (GET /hello)
-	GetHello(ctx context.Context, request GetHelloRequestObject) (GetHelloResponseObject, error)
+	// List cards
+	// (GET /cards)
+	ListCards(ctx context.Context, request ListCardsRequestObject) (ListCardsResponseObject, error)
+	// Create a new card
+	// (POST /cards)
+	PostCard(ctx context.Context, request PostCardRequestObject) (PostCardResponseObject, error)
+	// Delete a card
+	// (DELETE /cards/{id})
+	DeleteCard(ctx context.Context, request DeleteCardRequestObject) (DeleteCardResponseObject, error)
+	// Get a card by ID
+	// (GET /cards/{id})
+	GetCard(ctx context.Context, request GetCardRequestObject) (GetCardResponseObject, error)
+	// Update a card
+	// (PATCH /cards/{id})
+	PatchCard(ctx context.Context, request PatchCardRequestObject) (PatchCardResponseObject, error)
+	// List movie edition kinds
+	// (GET /movie-edition-kinds)
+	ListMovieEditionKinds(ctx context.Context, request ListMovieEditionKindsRequestObject) (ListMovieEditionKindsResponseObject, error)
+	// Create a new movie edition kind
+	// (POST /movie-edition-kinds)
+	PostMovieEditionKind(ctx context.Context, request PostMovieEditionKindRequestObject) (PostMovieEditionKindResponseObject, error)
+	// Delete a movie edition kind
+	// (DELETE /movie-edition-kinds/{id})
+	DeleteMovieEditionKind(ctx context.Context, request DeleteMovieEditionKindRequestObject) (DeleteMovieEditionKindResponseObject, error)
+	// Get a movie edition kind by ID
+	// (GET /movie-edition-kinds/{id})
+	GetMovieEditionKind(ctx context.Context, request GetMovieEditionKindRequestObject) (GetMovieEditionKindResponseObject, error)
+	// Update a movie edition kind
+	// (PATCH /movie-edition-kinds/{id})
+	PatchMovieEditionKind(ctx context.Context, request PatchMovieEditionKindRequestObject) (PatchMovieEditionKindResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -229,23 +759,283 @@ type strictHandler struct {
 	options     StrictHTTPServerOptions
 }
 
-// GetHello operation middleware
-func (sh *strictHandler) GetHello(w http.ResponseWriter, r *http.Request) {
-	var request GetHelloRequestObject
+// ListCards operation middleware
+func (sh *strictHandler) ListCards(w http.ResponseWriter, r *http.Request, params ListCardsParams) {
+	var request ListCardsRequestObject
+
+	request.Params = params
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.GetHello(ctx, request.(GetHelloRequestObject))
+		return sh.ssi.ListCards(ctx, request.(ListCardsRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetHello")
+		handler = middleware(handler, "ListCards")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(GetHelloResponseObject); ok {
-		if err := validResponse.VisitGetHelloResponse(w); err != nil {
+	} else if validResponse, ok := response.(ListCardsResponseObject); ok {
+		if err := validResponse.VisitListCardsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCard operation middleware
+func (sh *strictHandler) PostCard(w http.ResponseWriter, r *http.Request) {
+	var request PostCardRequestObject
+
+	var body PostCardJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCard(ctx, request.(PostCardRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCard")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCardResponseObject); ok {
+		if err := validResponse.VisitPostCardResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteCard operation middleware
+func (sh *strictHandler) DeleteCard(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request DeleteCardRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteCard(ctx, request.(DeleteCardRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteCard")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(DeleteCardResponseObject); ok {
+		if err := validResponse.VisitDeleteCardResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetCard operation middleware
+func (sh *strictHandler) GetCard(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request GetCardRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetCard(ctx, request.(GetCardRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetCard")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetCardResponseObject); ok {
+		if err := validResponse.VisitGetCardResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PatchCard operation middleware
+func (sh *strictHandler) PatchCard(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request PatchCardRequestObject
+
+	request.Id = id
+
+	var body PatchCardJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchCard(ctx, request.(PatchCardRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchCard")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PatchCardResponseObject); ok {
+		if err := validResponse.VisitPatchCardResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListMovieEditionKinds operation middleware
+func (sh *strictHandler) ListMovieEditionKinds(w http.ResponseWriter, r *http.Request, params ListMovieEditionKindsParams) {
+	var request ListMovieEditionKindsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListMovieEditionKinds(ctx, request.(ListMovieEditionKindsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListMovieEditionKinds")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListMovieEditionKindsResponseObject); ok {
+		if err := validResponse.VisitListMovieEditionKindsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostMovieEditionKind operation middleware
+func (sh *strictHandler) PostMovieEditionKind(w http.ResponseWriter, r *http.Request) {
+	var request PostMovieEditionKindRequestObject
+
+	var body PostMovieEditionKindJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostMovieEditionKind(ctx, request.(PostMovieEditionKindRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostMovieEditionKind")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostMovieEditionKindResponseObject); ok {
+		if err := validResponse.VisitPostMovieEditionKindResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteMovieEditionKind operation middleware
+func (sh *strictHandler) DeleteMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request DeleteMovieEditionKindRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteMovieEditionKind(ctx, request.(DeleteMovieEditionKindRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteMovieEditionKind")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(DeleteMovieEditionKindResponseObject); ok {
+		if err := validResponse.VisitDeleteMovieEditionKindResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMovieEditionKind operation middleware
+func (sh *strictHandler) GetMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request GetMovieEditionKindRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMovieEditionKind(ctx, request.(GetMovieEditionKindRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMovieEditionKind")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMovieEditionKindResponseObject); ok {
+		if err := validResponse.VisitGetMovieEditionKindResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PatchMovieEditionKind operation middleware
+func (sh *strictHandler) PatchMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request PatchMovieEditionKindRequestObject
+
+	request.Id = id
+
+	var body PatchMovieEditionKindJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchMovieEditionKind(ctx, request.(PatchMovieEditionKindRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchMovieEditionKind")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PatchMovieEditionKindResponseObject); ok {
+		if err := validResponse.VisitPatchMovieEditionKindResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -256,12 +1046,25 @@ func (sh *strictHandler) GetHello(w http.ResponseWriter, r *http.Request) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

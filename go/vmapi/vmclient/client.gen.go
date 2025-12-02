@@ -4,6 +4,7 @@
 package vmclient
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,7 +14,38 @@ import (
 	"strings"
 
 	externalRef0 "github.com/krelinga/video-manager-api/go/vmapi/vmtypes"
+	"github.com/oapi-codegen/runtime"
 )
+
+// ListCardsParams defines parameters for ListCards.
+type ListCardsParams struct {
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
+
+// ListMovieEditionKindsParams defines parameters for ListMovieEditionKinds.
+type ListMovieEditionKindsParams struct {
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
+
+// PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
+type PostCardJSONRequestBody = externalRef0.PostCardRequest
+
+// PatchCardJSONRequestBody defines body for PatchCard for application/json ContentType.
+type PatchCardJSONRequestBody = externalRef0.PatchCardRequest
+
+// PostMovieEditionKindJSONRequestBody defines body for PostMovieEditionKind for application/json ContentType.
+type PostMovieEditionKindJSONRequestBody = externalRef0.PostMovieEditionKindRequest
+
+// PatchMovieEditionKindJSONRequestBody defines body for PatchMovieEditionKind for application/json ContentType.
+type PatchMovieEditionKindJSONRequestBody = externalRef0.PatchMovieEditionKindRequest
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -88,12 +120,47 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetHello request
-	GetHello(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListCards request
+	ListCards(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostCardWithBody request with any body
+	PostCardWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PostCard(ctx context.Context, body PostCardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteCard request
+	DeleteCard(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetCard request
+	GetCard(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PatchCardWithBody request with any body
+	PatchCardWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PatchCard(ctx context.Context, id uint32, body PatchCardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListMovieEditionKinds request
+	ListMovieEditionKinds(ctx context.Context, params *ListMovieEditionKindsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostMovieEditionKindWithBody request with any body
+	PostMovieEditionKindWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PostMovieEditionKind(ctx context.Context, body PostMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteMovieEditionKind request
+	DeleteMovieEditionKind(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMovieEditionKind request
+	GetMovieEditionKind(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PatchMovieEditionKindWithBody request with any body
+	PatchMovieEditionKindWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PatchMovieEditionKind(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetHello(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetHelloRequest(c.Server)
+func (c *Client) ListCards(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListCardsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +171,164 @@ func (c *Client) GetHello(ctx context.Context, reqEditors ...RequestEditorFn) (*
 	return c.Client.Do(req)
 }
 
-// NewGetHelloRequest generates requests for GetHello
-func NewGetHelloRequest(server string) (*http.Request, error) {
+func (c *Client) PostCardWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostCardRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostCard(ctx context.Context, body PostCardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostCardRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteCard(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteCardRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCard(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCardRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchCardWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchCardRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchCard(ctx context.Context, id uint32, body PatchCardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchCardRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListMovieEditionKinds(ctx context.Context, params *ListMovieEditionKindsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMovieEditionKindsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostMovieEditionKindWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostMovieEditionKindRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostMovieEditionKind(ctx context.Context, body PostMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostMovieEditionKindRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteMovieEditionKind(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteMovieEditionKindRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetMovieEditionKind(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMovieEditionKindRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchMovieEditionKindWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchMovieEditionKindRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchMovieEditionKind(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchMovieEditionKindRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// NewListCardsRequest generates requests for ListCards
+func NewListCardsRequest(server string, params *ListCardsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -113,7 +336,153 @@ func NewGetHelloRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/hello")
+	operationPath := fmt.Sprintf("/cards")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_size", runtime.ParamLocationQuery, *params.PageSize); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PageToken != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_token", runtime.ParamLocationQuery, *params.PageToken); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostCardRequest calls the generic PostCard builder with application/json body
+func NewPostCardRequest(server string, body PostCardJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPostCardRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewPostCardRequestWithBody generates requests for PostCard with any type of body
+func NewPostCardRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/cards")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteCardRequest generates requests for DeleteCard
+func NewDeleteCardRequest(server string, id uint32) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/cards/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCardRequest generates requests for GetCard
+func NewGetCardRequest(server string, id uint32) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/cards/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -127,6 +496,273 @@ func NewGetHelloRequest(server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewPatchCardRequest calls the generic PatchCard builder with application/json body
+func NewPatchCardRequest(server string, id uint32, body PatchCardJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPatchCardRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewPatchCardRequestWithBody generates requests for PatchCard with any type of body
+func NewPatchCardRequestWithBody(server string, id uint32, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/cards/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListMovieEditionKindsRequest generates requests for ListMovieEditionKinds
+func NewListMovieEditionKindsRequest(server string, params *ListMovieEditionKindsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/movie-edition-kinds")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_size", runtime.ParamLocationQuery, *params.PageSize); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PageToken != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_token", runtime.ParamLocationQuery, *params.PageToken); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostMovieEditionKindRequest calls the generic PostMovieEditionKind builder with application/json body
+func NewPostMovieEditionKindRequest(server string, body PostMovieEditionKindJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPostMovieEditionKindRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewPostMovieEditionKindRequestWithBody generates requests for PostMovieEditionKind with any type of body
+func NewPostMovieEditionKindRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/movie-edition-kinds")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteMovieEditionKindRequest generates requests for DeleteMovieEditionKind
+func NewDeleteMovieEditionKindRequest(server string, id uint32) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/movie-edition-kinds/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetMovieEditionKindRequest generates requests for GetMovieEditionKind
+func NewGetMovieEditionKindRequest(server string, id uint32) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/movie-edition-kinds/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPatchMovieEditionKindRequest calls the generic PatchMovieEditionKind builder with application/json body
+func NewPatchMovieEditionKindRequest(server string, id uint32, body PatchMovieEditionKindJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPatchMovieEditionKindRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewPatchMovieEditionKindRequestWithBody generates requests for PatchMovieEditionKind with any type of body
+func NewPatchMovieEditionKindRequestWithBody(server string, id uint32, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/movie-edition-kinds/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -174,18 +810,53 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetHelloWithResponse request
-	GetHelloWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHelloResponse, error)
+	// ListCardsWithResponse request
+	ListCardsWithResponse(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*ListCardsResponse, error)
+
+	// PostCardWithBodyWithResponse request with any body
+	PostCardWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostCardResponse, error)
+
+	PostCardWithResponse(ctx context.Context, body PostCardJSONRequestBody, reqEditors ...RequestEditorFn) (*PostCardResponse, error)
+
+	// DeleteCardWithResponse request
+	DeleteCardWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*DeleteCardResponse, error)
+
+	// GetCardWithResponse request
+	GetCardWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*GetCardResponse, error)
+
+	// PatchCardWithBodyWithResponse request with any body
+	PatchCardWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchCardResponse, error)
+
+	PatchCardWithResponse(ctx context.Context, id uint32, body PatchCardJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchCardResponse, error)
+
+	// ListMovieEditionKindsWithResponse request
+	ListMovieEditionKindsWithResponse(ctx context.Context, params *ListMovieEditionKindsParams, reqEditors ...RequestEditorFn) (*ListMovieEditionKindsResponse, error)
+
+	// PostMovieEditionKindWithBodyWithResponse request with any body
+	PostMovieEditionKindWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostMovieEditionKindResponse, error)
+
+	PostMovieEditionKindWithResponse(ctx context.Context, body PostMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*PostMovieEditionKindResponse, error)
+
+	// DeleteMovieEditionKindWithResponse request
+	DeleteMovieEditionKindWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*DeleteMovieEditionKindResponse, error)
+
+	// GetMovieEditionKindWithResponse request
+	GetMovieEditionKindWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*GetMovieEditionKindResponse, error)
+
+	// PatchMovieEditionKindWithBodyWithResponse request with any body
+	PatchMovieEditionKindWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMovieEditionKindResponse, error)
+
+	PatchMovieEditionKindWithResponse(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMovieEditionKindResponse, error)
 }
 
-type GetHelloResponse struct {
+type ListCardsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *externalRef0.GetHelloResponse
+	JSON200      *externalRef0.ListCardsResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetHelloResponse) Status() string {
+func (r ListCardsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -193,38 +864,561 @@ func (r GetHelloResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetHelloResponse) StatusCode() int {
+func (r ListCardsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// GetHelloWithResponse request returning *GetHelloResponse
-func (c *ClientWithResponses) GetHelloWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHelloResponse, error) {
-	rsp, err := c.GetHello(ctx, reqEditors...)
+type PostCardResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *externalRef0.CardResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PostCardResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostCardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteCardResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteCardResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteCardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCardResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *externalRef0.CardResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCardResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PatchCardResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *externalRef0.CardResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PatchCardResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PatchCardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListMovieEditionKindsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *externalRef0.ListMovieEditionKindsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r ListMovieEditionKindsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListMovieEditionKindsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostMovieEditionKindResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *externalRef0.MovieEditionKindResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PostMovieEditionKindResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostMovieEditionKindResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteMovieEditionKindResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteMovieEditionKindResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteMovieEditionKindResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetMovieEditionKindResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *externalRef0.MovieEditionKindResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMovieEditionKindResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMovieEditionKindResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PatchMovieEditionKindResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *externalRef0.MovieEditionKindResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PatchMovieEditionKindResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PatchMovieEditionKindResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ListCardsWithResponse request returning *ListCardsResponse
+func (c *ClientWithResponses) ListCardsWithResponse(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*ListCardsResponse, error) {
+	rsp, err := c.ListCards(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetHelloResponse(rsp)
+	return ParseListCardsResponse(rsp)
 }
 
-// ParseGetHelloResponse parses an HTTP response from a GetHelloWithResponse call
-func ParseGetHelloResponse(rsp *http.Response) (*GetHelloResponse, error) {
+// PostCardWithBodyWithResponse request with arbitrary body returning *PostCardResponse
+func (c *ClientWithResponses) PostCardWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostCardResponse, error) {
+	rsp, err := c.PostCardWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostCardResponse(rsp)
+}
+
+func (c *ClientWithResponses) PostCardWithResponse(ctx context.Context, body PostCardJSONRequestBody, reqEditors ...RequestEditorFn) (*PostCardResponse, error) {
+	rsp, err := c.PostCard(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostCardResponse(rsp)
+}
+
+// DeleteCardWithResponse request returning *DeleteCardResponse
+func (c *ClientWithResponses) DeleteCardWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*DeleteCardResponse, error) {
+	rsp, err := c.DeleteCard(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteCardResponse(rsp)
+}
+
+// GetCardWithResponse request returning *GetCardResponse
+func (c *ClientWithResponses) GetCardWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*GetCardResponse, error) {
+	rsp, err := c.GetCard(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCardResponse(rsp)
+}
+
+// PatchCardWithBodyWithResponse request with arbitrary body returning *PatchCardResponse
+func (c *ClientWithResponses) PatchCardWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchCardResponse, error) {
+	rsp, err := c.PatchCardWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchCardResponse(rsp)
+}
+
+func (c *ClientWithResponses) PatchCardWithResponse(ctx context.Context, id uint32, body PatchCardJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchCardResponse, error) {
+	rsp, err := c.PatchCard(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchCardResponse(rsp)
+}
+
+// ListMovieEditionKindsWithResponse request returning *ListMovieEditionKindsResponse
+func (c *ClientWithResponses) ListMovieEditionKindsWithResponse(ctx context.Context, params *ListMovieEditionKindsParams, reqEditors ...RequestEditorFn) (*ListMovieEditionKindsResponse, error) {
+	rsp, err := c.ListMovieEditionKinds(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListMovieEditionKindsResponse(rsp)
+}
+
+// PostMovieEditionKindWithBodyWithResponse request with arbitrary body returning *PostMovieEditionKindResponse
+func (c *ClientWithResponses) PostMovieEditionKindWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostMovieEditionKindResponse, error) {
+	rsp, err := c.PostMovieEditionKindWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostMovieEditionKindResponse(rsp)
+}
+
+func (c *ClientWithResponses) PostMovieEditionKindWithResponse(ctx context.Context, body PostMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*PostMovieEditionKindResponse, error) {
+	rsp, err := c.PostMovieEditionKind(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostMovieEditionKindResponse(rsp)
+}
+
+// DeleteMovieEditionKindWithResponse request returning *DeleteMovieEditionKindResponse
+func (c *ClientWithResponses) DeleteMovieEditionKindWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*DeleteMovieEditionKindResponse, error) {
+	rsp, err := c.DeleteMovieEditionKind(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteMovieEditionKindResponse(rsp)
+}
+
+// GetMovieEditionKindWithResponse request returning *GetMovieEditionKindResponse
+func (c *ClientWithResponses) GetMovieEditionKindWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*GetMovieEditionKindResponse, error) {
+	rsp, err := c.GetMovieEditionKind(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMovieEditionKindResponse(rsp)
+}
+
+// PatchMovieEditionKindWithBodyWithResponse request with arbitrary body returning *PatchMovieEditionKindResponse
+func (c *ClientWithResponses) PatchMovieEditionKindWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMovieEditionKindResponse, error) {
+	rsp, err := c.PatchMovieEditionKindWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchMovieEditionKindResponse(rsp)
+}
+
+func (c *ClientWithResponses) PatchMovieEditionKindWithResponse(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMovieEditionKindResponse, error) {
+	rsp, err := c.PatchMovieEditionKind(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchMovieEditionKindResponse(rsp)
+}
+
+// ParseListCardsResponse parses an HTTP response from a ListCardsWithResponse call
+func ParseListCardsResponse(rsp *http.Response) (*ListCardsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetHelloResponse{
+	response := &ListCardsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest externalRef0.GetHelloResponse
+		var dest externalRef0.ListCardsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePostCardResponse parses an HTTP response from a PostCardWithResponse call
+func ParsePostCardResponse(rsp *http.Response) (*PostCardResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostCardResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest externalRef0.CardResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteCardResponse parses an HTTP response from a DeleteCardWithResponse call
+func ParseDeleteCardResponse(rsp *http.Response) (*DeleteCardResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteCardResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetCardResponse parses an HTTP response from a GetCardWithResponse call
+func ParseGetCardResponse(rsp *http.Response) (*GetCardResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCardResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest externalRef0.CardResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePatchCardResponse parses an HTTP response from a PatchCardWithResponse call
+func ParsePatchCardResponse(rsp *http.Response) (*PatchCardResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PatchCardResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest externalRef0.CardResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListMovieEditionKindsResponse parses an HTTP response from a ListMovieEditionKindsWithResponse call
+func ParseListMovieEditionKindsResponse(rsp *http.Response) (*ListMovieEditionKindsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListMovieEditionKindsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest externalRef0.ListMovieEditionKindsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePostMovieEditionKindResponse parses an HTTP response from a PostMovieEditionKindWithResponse call
+func ParsePostMovieEditionKindResponse(rsp *http.Response) (*PostMovieEditionKindResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostMovieEditionKindResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest externalRef0.MovieEditionKindResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteMovieEditionKindResponse parses an HTTP response from a DeleteMovieEditionKindWithResponse call
+func ParseDeleteMovieEditionKindResponse(rsp *http.Response) (*DeleteMovieEditionKindResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteMovieEditionKindResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetMovieEditionKindResponse parses an HTTP response from a GetMovieEditionKindWithResponse call
+func ParseGetMovieEditionKindResponse(rsp *http.Response) (*GetMovieEditionKindResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMovieEditionKindResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest externalRef0.MovieEditionKindResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePatchMovieEditionKindResponse parses an HTTP response from a PatchMovieEditionKindWithResponse call
+func ParsePatchMovieEditionKindResponse(rsp *http.Response) (*PatchMovieEditionKindResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PatchMovieEditionKindResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest externalRef0.MovieEditionKindResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

@@ -15,18 +15,120 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-// GetHelloResponse defines model for GetHelloResponse.
-type GetHelloResponse struct {
-	Message string `json:"message"`
+// Card defines model for Card.
+type Card struct {
+	Id    uint32  `json:"id"`
+	Movie *Movie  `json:"movie,omitempty"`
+	Name  *string `json:"name,omitempty"`
+	Year  *uint32 `json:"year,omitempty"`
+}
+
+// CardPatch Patch object with only one field set per instance
+type CardPatch struct {
+	// Movie Patch object with only one field set per instance
+	Movie *MoviePatch `json:"movie,omitempty"`
+	Name  *string     `json:"name,omitempty"`
+	Year  *uint32     `json:"year,omitempty"`
+}
+
+// CardResponse defines model for CardResponse.
+type CardResponse struct {
+	Card Card `json:"card"`
+}
+
+// ListCardsResponse defines model for ListCardsResponse.
+type ListCardsResponse struct {
+	Cards         []Card  `json:"cards"`
+	NextPageToken *string `json:"next_page_token,omitempty"`
+}
+
+// ListMovieEditionKindsResponse defines model for ListMovieEditionKindsResponse.
+type ListMovieEditionKindsResponse struct {
+	MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
+	NextPageToken     *string            `json:"next_page_token,omitempty"`
+}
+
+// Movie defines model for Movie.
+type Movie struct {
+	Editions *[]MovieEdition `json:"editions,omitempty"`
+	FanartId *string         `json:"fanart_id,omitempty"`
+	Id       uint32          `json:"id"`
+	TmdbId   *uint64         `json:"tmdb_id,omitempty"`
+}
+
+// MovieEdition defines model for MovieEdition.
+type MovieEdition struct {
+	Id   uint32           `json:"id"`
+	Kind MovieEditionKind `json:"kind"`
+}
+
+// MovieEditionKind defines model for MovieEditionKind.
+type MovieEditionKind struct {
+	Id        uint32 `json:"id"`
+	IsDefault bool   `json:"is_default"`
+	Name      string `json:"name"`
+}
+
+// MovieEditionKindPatch Patch object with only one field set per instance
+type MovieEditionKindPatch struct {
+	IsDefault *bool   `json:"is_default,omitempty"`
+	Name      *string `json:"name,omitempty"`
+}
+
+// MovieEditionKindResponse defines model for MovieEditionKindResponse.
+type MovieEditionKindResponse struct {
+	MovieEditionKind MovieEditionKind `json:"movie_edition_kind"`
+}
+
+// MoviePatch Patch object with only one field set per instance
+type MoviePatch struct {
+	AddMovieEditionKindId *uint32 `json:"add_movie_edition_kind_id,omitempty"`
+	FanartId              *string `json:"fanart_id,omitempty"`
+	RemoveMovieEditionId  *uint32 `json:"remove_movie_edition_id,omitempty"`
+	TmdbId                *uint64 `json:"tmdb_id,omitempty"`
+}
+
+// PatchCardRequest defines model for PatchCardRequest.
+type PatchCardRequest struct {
+	Patches []CardPatch `json:"patches"`
+}
+
+// PatchMovieEditionKindRequest defines model for PatchMovieEditionKindRequest.
+type PatchMovieEditionKindRequest struct {
+	Patches []MovieEditionKindPatch `json:"patches"`
+}
+
+// PostCardMovie defines model for PostCardMovie.
+type PostCardMovie struct {
+	MovieEditionKindIds []uint32 `json:"movie_edition_kind_ids"`
+	TmdbMovieId         *uint64  `json:"tmdb_movie_id,omitempty"`
+}
+
+// PostCardRequest defines model for PostCardRequest.
+type PostCardRequest struct {
+	Movie *PostCardMovie `json:"movie,omitempty"`
+}
+
+// PostMovieEditionKindRequest defines model for PostMovieEditionKindRequest.
+type PostMovieEditionKindRequest struct {
+	IsDefault *bool  `json:"is_default,omitempty"`
+	Name      string `json:"name"`
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/zyOsU4DMRBEf8VMbZ2C6NylgnQRQqJAFMfdXs7I5128GyCK/O/IRkpnPc/M2ysm3oQz",
-	"ZVOEK3RaaRv785HsiVLiZ1LhrNSYFBYqFqknNlIdT/2DfsdNEiGgd7z74ZLmO3jYRRpWKzGfUKtHoa9z",
-	"LDQjvN0m3m9B/vikyVBbMuaF2/pMOpUoFjkj4OUi5GZaYo6NqFu4OFvJdbV7bWa3Px6GZo/Wr9ofD671",
-	"FB7fVPR/6X7YDTtUDxbKo0QEPHTkIaOtipDPKdW/AAAA///CCKGOJQEAAA==",
+	"H4sIAAAAAAAC/7RWTW/bMAz9KwK3o9F067CDb0Oxw9AFKIZhl6EwFItOtNqSKjHZgiL/fZDsZrMtu87X",
+	"qYXyTL7HR5F6hlxXRitU5CB9BpevsOLh31tuhf9rrDZoSWI4leGs0LbiBCmspaKb95AAbQ1CClIRLtHC",
+	"LoFKbyR68FuLBaTwZvYv1azJM5sH0C4BxasAbuI4slIt/Q9b5HZayl0CFp/W0qKA9Kdn+rAH6cUvzMnH",
+	"87LuOeUrH1Sgy600JLWCFMIxq6Hst6QV06rcMq2QFRJLwRwSM2iZVI64yhGSTnWma64pnE14VOY3dEYr",
+	"h30X88bbMZrB/25Rw4exsn6VjvwXbjxp3UOElZuWfp+JW8u3oV74hzLDl5iRfkQVKV2EshvkHMz4LKRv",
+	"gTupxvgHczOssdmjB09W001zFmUxQjGd85eubOtpPjxORExAwRW3lNUjotfP0ycHVWKRReAfPxx961vU",
+	"TxhqvsiHe93n2ER6jepdk+5YutJlAgu+Luk/SxZal8jVyPCJ8Q3QVsQp5C82aY9X9irnQybAyb0QCTlY",
+	"14sVkwuR9Ylk0/ts/OZbrPQGOxkuNw56xQsFqhfi0xod9Y01HoGHLaf9Bm+PwY6/L5Efhnj1u+9MHONX",
+	"8SS+ut7xA/sk2kFtvpPs7myVYH8d+8idMEBsTOKgC5NeeO1CxXtS998eg0nPM8YDqi/aw6QqdH+wfN8a",
+	"ZAILqeqHAiu0ZbRC9kMK1GzOFV+iZbeceKmX7NP9lytvhqTSxx8EMR/XQQIbtK7O9O7q+uraK9EGFTcS",
+	"UrgJR4lvyJWDVK3Lcvc3AAD//3uYv5OuDAAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
