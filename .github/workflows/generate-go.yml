@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - openapi.yml
+      - "*.yml"
 
 jobs:
   generate-go-code:
