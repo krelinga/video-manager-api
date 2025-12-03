@@ -125,7 +125,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["MovieEditionKind"][];
+          "application/json": {
+            movie_edition_kinds: components["schemas"]["MovieEditionKind"][];
+            next_page_token?: string;
+          };
         };
       };
     };
@@ -226,7 +229,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["Card"][];
+          "application/json": {
+            cards: components["schemas"]["Card"][];
+            next_page_token?: string;
+          };
         };
       };
     };

@@ -30,9 +30,17 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MovieEditionKind'
+                type: object
+                properties:
+                  movie_edition_kinds:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MovieEditionKind'
+                  next_page_token:
+                    type: string
+                required:
+                  - movie_edition_kinds
+
     post:
       summary: Create a new movie edition kind
       operationId: postMovieEditionKind
@@ -143,9 +151,17 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Card'
+                type: object
+                properties:
+                  cards:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Card'
+                  next_page_token:
+                    type: string
+                required:
+                  - cards
+
     post:
       summary: Create a new card
       operationId: postCard
