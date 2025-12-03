@@ -1,4 +1,4 @@
-name: Generate Go Client & Server from OpenAPI
+name: Generate OpenAPI Code
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
       - "config/*.yml"
 
 jobs:
-  generate-go-code:
+  generate-api-code:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -30,6 +30,15 @@ jobs:
       - name: Generate Go code
         run: |
           ./scripts/generate-go.sh
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Generate TypeScript Code
+        run: |
+          ./scripts/generate-ts.sh
 
       - name: Commit generated code
         run: |
