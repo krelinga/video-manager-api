@@ -1,0 +1,17 @@
+{
+  "name": "@krelinga/video-manager-api",
+  "version": "1.0.0",
+  "description": "TypeScript types for Video Manager Catalog API",
+  "main": "src/types.ts",
+  "types": "src/types.ts",
+  "scripts": {
+    "generate": "openapi-typescript ../../openapi.yml --output src/types.ts"
+  },
+  "keywords": ["video-manager", "api", "types"],
+  "author": "krelinga",
+  "license": "MIT",
+  "devDependencies": {
+    "openapi-typescript": "^6.7.0",
+    "typescript": "^5.0.0"
+  }
+}

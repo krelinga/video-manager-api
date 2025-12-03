@@ -1,19 +1,356 @@
 openapi: 3.0.0
 info:
-  title: Hello World API
+  title: Video Manager Catalog API
   version: 1.0.0
-  description: A simple API that returns a hello world message.
-servers:
-  - url: http://localhost:8080
+  description: REST API for managing movie edition kinds and cards in the video catalog.
+
 paths:
-  /hello:
+  # MovieEditionKind endpoints
+  /movie-edition-kinds:
     get:
-      summary: Returns a hello world message
-      operationId: getHello
+      summary: List movie edition kinds
+      operationId: listMovieEditionKinds
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: 'types.yml#/components/schemas/GetHelloResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieEditionKind'
+    post:
+      summary: Create a new movie edition kind
+      operationId: postMovieEditionKind
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                is_default:
+                  type: boolean
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieEditionKind'
+
+  /movie-edition-kinds/{id}:
+    get:
+      summary: Get a movie edition kind by ID
+      operationId: getMovieEditionKind
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieEditionKind'
+        '404':
+          description: Not found
+    patch:
+      summary: Update a movie edition kind
+      operationId: patchMovieEditionKind
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MovieEditionKindPatch'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieEditionKind'
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a movie edition kind
+      operationId: deleteMovieEditionKind
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Not found
+
+  # Card endpoints
+  /cards:
+    get:
+      summary: List cards
+      operationId: listCards
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+    post:
+      summary: Create a new card
+      operationId: postCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Request body for creating a card.  Only one field should be set.
+              properties:
+                movie:
+                  $ref: '#/components/schemas/MoviePost'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+
+  /cards/{id}:
+    get:
+      summary: Get a card by ID
+      operationId: getCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '404':
+          description: Not found
+    patch:
+      summary: Update a card
+      operationId: patchCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CardPatch'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a card
+      operationId: deleteCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Not found
+
+components:
+  schemas:
+    # MovieEditionKind types
+    MovieEditionKind:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        name:
+          type: string
+        is_default:
+          type: boolean
+      required:
+        - id
+        - name
+        - is_default
+
+    MovieEditionKindPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        is_default:
+          type: boolean
+
+    # MovieEdition types
+    MovieEdition:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        kind:
+          $ref: '#/components/schemas/MovieEditionKind'
+      required:
+        - id
+        - kind
+
+    # Movie types
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        tmdb_id:
+          type: integer
+          format: uint64
+        fanart_id:
+          type: string
+        editions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieEdition'
+      required:
+        - id
+
+    MoviePatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        tmdb_id:
+          type: integer
+          format: uint64
+        fanart_id:
+          type: string
+        add_movie_edition_kind_id:
+          type: integer
+          format: uint32
+        remove_movie_edition_id:
+          type: integer
+          format: uint32
+
+    # Card types
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        name:
+          type: string
+        year:
+          type: integer
+          format: uint32
+        movie:
+          $ref: '#/components/schemas/Movie'
+      required:
+        - id
+
+    CardPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        year:
+          type: integer
+          format: uint32
+        movie:
+          $ref: '#/components/schemas/MoviePatch'
+
+    MoviePostDataSource:
+      type: object
+      description: Data source for creating a movie.  Only one field should be set.
+      properties:
+        tmdb_movie_id:
+          type: integer
+          format: uint64
+
+    MoviePost:
+      type: object
+      properties:
+        data_source:
+          $ref: '#/components/schemas/MoviePostDataSource'
+        movie_edition_kind_ids:
+          type: array
+          items:
+            type: integer
+            format: uint32
+      required:
+        - data_source

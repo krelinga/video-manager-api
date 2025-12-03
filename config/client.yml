@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
-package: vmclient
-output: client.gen.go
-generate:
-  models: true
-  client: true
-import-mapping:
-  types.yml: github.com/krelinga/video-manager-api/go/vmapi/vmtypes
