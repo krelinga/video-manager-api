@@ -1,6 +1,6 @@
 name: Release
 
-display-name: "Release ${{ github.event.inputs.release_name }}"
+run-name: "Release ${{ github.event.inputs.release_name }}"
 
 on:
   workflow_dispatch:
