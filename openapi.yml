@@ -55,6 +55,8 @@ paths:
                   type: string
                 is_default:
                   type: boolean
+              required:
+                - name
       responses:
         '201':
           description: Created
@@ -62,6 +64,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MovieEditionKind'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /movie-edition-kinds/{id}:
     get:
@@ -83,6 +91,11 @@ paths:
                 $ref: '#/components/schemas/MovieEditionKind'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
     patch:
       summary: Update a movie edition kind
       operationId: patchMovieEditionKind
@@ -110,6 +123,17 @@ paths:
                 $ref: '#/components/schemas/MovieEditionKind'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
     delete:
       summary: Delete a movie edition kind
       operationId: deleteMovieEditionKind
@@ -125,6 +149,10 @@ paths:
           description: Deleted successfully
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # Card endpoints
   /cards:
@@ -182,6 +210,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Card'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /cards/{id}:
     get:
@@ -203,6 +237,7 @@ paths:
                 $ref: '#/components/schemas/Card'
         '404':
           description: Not found
+
     patch:
       summary: Update a card
       operationId: patchCard
@@ -228,8 +263,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Card'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
     delete:
       summary: Delete a card
       operationId: deleteCard
@@ -245,9 +291,22 @@ paths:
           description: Deleted successfully
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
+    # Common error type
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
     # MovieEditionKind types
     MovieEditionKind:
       type: object
@@ -304,6 +363,7 @@ components:
             $ref: '#/components/schemas/MovieEdition'
       required:
         - id
+        - editions
 
     MoviePatch:
       type: object
@@ -337,6 +397,7 @@ components:
           $ref: '#/components/schemas/Movie'
       required:
         - id
+        - name
 
     CardPatch:
       type: object

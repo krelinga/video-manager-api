@@ -39,6 +39,9 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    ErrorResponse: {
+      message: string;
+    };
     MovieEditionKind: {
       /** Format: uint32 */
       id: number;
@@ -61,7 +64,7 @@ export interface components {
       /** Format: uint64 */
       tmdb_id?: number;
       fanart_id?: string;
-      editions?: components["schemas"]["MovieEdition"][];
+      editions: components["schemas"]["MovieEdition"][];
     };
     /** @description Patch object with only one field set per instance */
     MoviePatch: {
@@ -76,7 +79,7 @@ export interface components {
     Card: {
       /** Format: uint32 */
       id: number;
-      name?: string;
+      name: string;
       /** Format: uint32 */
       year?: number;
       movie?: components["schemas"]["Movie"];
@@ -138,7 +141,7 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          name?: string;
+          name: string;
           is_default?: boolean;
         };
       };
@@ -148,6 +151,12 @@ export interface operations {
       201: {
         content: {
           "application/json": components["schemas"]["MovieEditionKind"];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
         };
       };
     };
@@ -168,7 +177,9 @@ export interface operations {
       };
       /** @description Not found */
       404: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
       };
     };
   };
@@ -186,7 +197,9 @@ export interface operations {
       };
       /** @description Not found */
       404: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
       };
     };
   };
@@ -209,9 +222,17 @@ export interface operations {
           "application/json": components["schemas"]["MovieEditionKind"];
         };
       };
+      /** @description Bad request */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
       /** @description Not found */
       404: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
       };
     };
   };
@@ -253,6 +274,12 @@ export interface operations {
           "application/json": components["schemas"]["Card"];
         };
       };
+      /** @description Bad request */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
     };
   };
   /** Get a card by ID */
@@ -289,7 +316,9 @@ export interface operations {
       };
       /** @description Not found */
       404: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
       };
     };
   };
@@ -312,9 +341,17 @@ export interface operations {
           "application/json": components["schemas"]["Card"];
         };
       };
+      /** @description Bad request */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
       /** @description Not found */
       404: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
       };
     };
   };
