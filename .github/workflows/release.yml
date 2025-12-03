@@ -43,14 +43,13 @@ jobs:
         with:
           go-version: 'stable'
 
-      - name: Change to Go directory
-        run: cd go/vmapi
-
       - name: Install Go dependencies
         run: go mod download
+        working-directory: go/vmapi
 
       - name: Run Go tests
         run: go test ./...
+        working-directory: go/vmapi
 
       - name: Create and push tag
         run: |
