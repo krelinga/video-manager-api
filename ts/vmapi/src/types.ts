@@ -101,7 +101,14 @@ export interface components {
       movie_edition_kind_ids?: number[];
     };
   };
-  responses: never;
+  responses: {
+    /** @description Error response */
+    ErrorResponse: {
+      content: {
+        "application/json": components["schemas"]["ErrorResponse"];
+      };
+    };
+  };
   parameters: never;
   requestBodies: never;
   headers: never;
@@ -134,6 +141,7 @@ export interface operations {
           };
         };
       };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Create a new movie edition kind */
@@ -153,12 +161,7 @@ export interface operations {
           "application/json": components["schemas"]["MovieEditionKind"];
         };
       };
-      /** @description Bad request */
-      400: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Get a movie edition kind by ID */
@@ -175,12 +178,7 @@ export interface operations {
           "application/json": components["schemas"]["MovieEditionKind"];
         };
       };
-      /** @description Not found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Delete a movie edition kind */
@@ -195,12 +193,7 @@ export interface operations {
       204: {
         content: never;
       };
-      /** @description Not found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Update a movie edition kind */
@@ -222,18 +215,7 @@ export interface operations {
           "application/json": components["schemas"]["MovieEditionKind"];
         };
       };
-      /** @description Bad request */
-      400: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
-      /** @description Not found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** List cards */
@@ -256,6 +238,7 @@ export interface operations {
           };
         };
       };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Create a new card */
@@ -274,12 +257,7 @@ export interface operations {
           "application/json": components["schemas"]["Card"];
         };
       };
-      /** @description Bad request */
-      400: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Get a card by ID */
@@ -296,10 +274,7 @@ export interface operations {
           "application/json": components["schemas"]["Card"];
         };
       };
-      /** @description Not found */
-      404: {
-        content: never;
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Delete a card */
@@ -314,12 +289,7 @@ export interface operations {
       204: {
         content: never;
       };
-      /** @description Not found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
   /** Update a card */
@@ -341,18 +311,7 @@ export interface operations {
           "application/json": components["schemas"]["Card"];
         };
       };
-      /** @description Bad request */
-      400: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
-      /** @description Not found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
+      default: components["responses"]["ErrorResponse"];
     };
   };
 }

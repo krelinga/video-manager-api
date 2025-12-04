@@ -947,6 +947,7 @@ type ListCardsResponse struct {
 		Cards         []Card  `json:"cards"`
 		NextPageToken *string `json:"next_page_token,omitempty"`
 	}
+	JSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -969,7 +970,7 @@ type PostCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *Card
-	JSON400      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -991,7 +992,7 @@ func (r PostCardResponse) StatusCode() int {
 type DeleteCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON404      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1014,6 +1015,7 @@ type GetCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Card
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1036,8 +1038,7 @@ type PatchCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Card
-	JSON400      *ErrorResponse
-	JSON404      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1063,6 +1064,7 @@ type ListMovieEditionKindsResponse struct {
 		MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
 		NextPageToken     *string            `json:"next_page_token,omitempty"`
 	}
+	JSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1085,7 +1087,7 @@ type PostMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *MovieEditionKind
-	JSON400      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1107,7 +1109,7 @@ func (r PostMovieEditionKindResponse) StatusCode() int {
 type DeleteMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON404      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1130,7 +1132,7 @@ type GetMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *MovieEditionKind
-	JSON404      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1153,8 +1155,7 @@ type PatchMovieEditionKindResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *MovieEditionKind
-	JSON400      *ErrorResponse
-	JSON404      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1319,6 +1320,13 @@ func ParseListCardsResponse(rsp *http.Response) (*ListCardsResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -1345,12 +1353,12 @@ func ParsePostCardResponse(rsp *http.Response) (*PostCardResponse, error) {
 		}
 		response.JSON201 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -1371,12 +1379,12 @@ func ParseDeleteCardResponse(rsp *http.Response) (*DeleteCardResponse, error) {
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON404 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -1404,6 +1412,13 @@ func ParseGetCardResponse(rsp *http.Response) (*GetCardResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -1430,19 +1445,12 @@ func ParsePatchCardResponse(rsp *http.Response) (*PatchCardResponse, error) {
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -1473,6 +1481,13 @@ func ParseListMovieEditionKindsResponse(rsp *http.Response) (*ListMovieEditionKi
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -1499,12 +1514,12 @@ func ParsePostMovieEditionKindResponse(rsp *http.Response) (*PostMovieEditionKin
 		}
 		response.JSON201 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -1525,12 +1540,12 @@ func ParseDeleteMovieEditionKindResponse(rsp *http.Response) (*DeleteMovieEditio
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON404 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -1558,12 +1573,12 @@ func ParseGetMovieEditionKindResponse(rsp *http.Response) (*GetMovieEditionKindR
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON404 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -1591,19 +1606,12 @@ func ParsePatchMovieEditionKindResponse(rsp *http.Response) (*PatchMovieEditionK
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -2035,6 +2043,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	return m
 }
 
+type ErrorResponseJSONResponse ErrorResponse
+
 type ListCardsRequestObject struct {
 	Params ListCardsParams
 }
@@ -2055,6 +2065,18 @@ func (response ListCards200JSONResponse) VisitListCardsResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
+type ListCardsdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ListCardsdefaultJSONResponse) VisitListCardsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
 type PostCardRequestObject struct {
 	Body *PostCardJSONRequestBody
 }
@@ -2072,13 +2094,16 @@ func (response PostCard201JSONResponse) VisitPostCardResponse(w http.ResponseWri
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostCard400JSONResponse ErrorResponse
+type PostCarddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
 
-func (response PostCard400JSONResponse) VisitPostCardResponse(w http.ResponseWriter) error {
+func (response PostCarddefaultJSONResponse) VisitPostCardResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type DeleteCardRequestObject struct {
@@ -2097,13 +2122,16 @@ func (response DeleteCard204Response) VisitDeleteCardResponse(w http.ResponseWri
 	return nil
 }
 
-type DeleteCard404JSONResponse ErrorResponse
+type DeleteCarddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
 
-func (response DeleteCard404JSONResponse) VisitDeleteCardResponse(w http.ResponseWriter) error {
+func (response DeleteCarddefaultJSONResponse) VisitDeleteCardResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type GetCardRequestObject struct {
@@ -2123,12 +2151,16 @@ func (response GetCard200JSONResponse) VisitGetCardResponse(w http.ResponseWrite
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetCard404Response struct {
+type GetCarddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-func (response GetCard404Response) VisitGetCardResponse(w http.ResponseWriter) error {
-	w.WriteHeader(404)
-	return nil
+func (response GetCarddefaultJSONResponse) VisitGetCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type PatchCardRequestObject struct {
@@ -2149,22 +2181,16 @@ func (response PatchCard200JSONResponse) VisitPatchCardResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchCard400JSONResponse ErrorResponse
-
-func (response PatchCard400JSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
+type PatchCarddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-type PatchCard404JSONResponse ErrorResponse
-
-func (response PatchCard404JSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
+func (response PatchCarddefaultJSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type ListMovieEditionKindsRequestObject struct {
@@ -2187,6 +2213,18 @@ func (response ListMovieEditionKinds200JSONResponse) VisitListMovieEditionKindsR
 	return json.NewEncoder(w).Encode(response)
 }
 
+type ListMovieEditionKindsdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ListMovieEditionKindsdefaultJSONResponse) VisitListMovieEditionKindsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
 type PostMovieEditionKindRequestObject struct {
 	Body *PostMovieEditionKindJSONRequestBody
 }
@@ -2204,13 +2242,16 @@ func (response PostMovieEditionKind201JSONResponse) VisitPostMovieEditionKindRes
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostMovieEditionKind400JSONResponse ErrorResponse
+type PostMovieEditionKinddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
 
-func (response PostMovieEditionKind400JSONResponse) VisitPostMovieEditionKindResponse(w http.ResponseWriter) error {
+func (response PostMovieEditionKinddefaultJSONResponse) VisitPostMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type DeleteMovieEditionKindRequestObject struct {
@@ -2229,13 +2270,16 @@ func (response DeleteMovieEditionKind204Response) VisitDeleteMovieEditionKindRes
 	return nil
 }
 
-type DeleteMovieEditionKind404JSONResponse ErrorResponse
+type DeleteMovieEditionKinddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
 
-func (response DeleteMovieEditionKind404JSONResponse) VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error {
+func (response DeleteMovieEditionKinddefaultJSONResponse) VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type GetMovieEditionKindRequestObject struct {
@@ -2255,13 +2299,16 @@ func (response GetMovieEditionKind200JSONResponse) VisitGetMovieEditionKindRespo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetMovieEditionKind404JSONResponse ErrorResponse
+type GetMovieEditionKinddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
 
-func (response GetMovieEditionKind404JSONResponse) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
+func (response GetMovieEditionKinddefaultJSONResponse) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type PatchMovieEditionKindRequestObject struct {
@@ -2282,22 +2329,16 @@ func (response PatchMovieEditionKind200JSONResponse) VisitPatchMovieEditionKindR
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchMovieEditionKind400JSONResponse ErrorResponse
-
-func (response PatchMovieEditionKind400JSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
+type PatchMovieEditionKinddefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-type PatchMovieEditionKind404JSONResponse ErrorResponse
-
-func (response PatchMovieEditionKind404JSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
+func (response PatchMovieEditionKinddefaultJSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 // StrictServerInterface represents all server handlers.
@@ -2650,26 +2691,25 @@ func (sh *strictHandler) PatchMovieEditionKind(w http.ResponseWriter, r *http.Re
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xYTW/bOBD9KwPuHt3YbYM9+LZNgyLoZrdounspAoMWxzZbiVTJUVpt4P++GFL+kmRH",
-	"dj7cBXKKQ9OcN2/eDJ90KxKb5dagIS+Gt8InM8xk+HgmneK/ubM5OtIYVnVYm1iXSRJDUWhDr1+JnqAy",
-	"RzEU2hBO0Yl5T2T2RiNv/tXhRAzFL/1VqH4Vp38ZNs17wsgsbK7O8eS0mfIXJUrXLeS8Jxx+K7RDJYaf",
-	"GWl17PVyrx1/wYT4WM7ug6Rkxmcr9InTOWlrxFCEZYhb4bumGViTlmANwkRjqsAjQY4OtPEkTYKiVyOp",
-	"e+oRwoPl30jz3DnrPqLPrfHYrGaG3stpW+AamYuNbVReLrLdPBuVZkKjaggz34mQ8/grsUpGOidL/n8i",
-	"jXQ0igps8NRdmJSp8ahl+2+nHUW1zGwrG4ss7tE+X7VR+zD2nve3wg0n3QX1fRXuULjajxROZJHSWnXG",
-	"1qYozQ59b+3ZjRO7gH+0Zj48s3bMjwZUKjUKk2dUCXTElR91r+HuBnOY2RusRXi8rttCnvXUlKmSJEfe",
-	"Fi7pOHWtp7eS5FX8yeKyqvO2Obo6JbkxsmriXkd5vSvBNWgNmfB3EA+BiXWQOJSkzRQkhBxOAP6q6WZm",
-	"i1TBGFlBJw3VhLrE9A+vDi9pM7FNvB/Prz7B7x8uAthMGjllsCEeVHQD0+1BGgWJdMqDNkAzhBut0EIi",
-	"SaZ2ysBJU8pR/wlfXPJh6OAsbuAgoidu0PkY+eXJ4GTAvNocjcy1GIrXYaknckmzkHw/BORPUwy6YmYk",
-	"g7pQYij+0J7Owg7+jZMZEjovhp/rWV7KHzorMjBFNkYHdgJBNkAWHFLhDM8z3vitQFcuZtxQ5HKKI6//",
-	"5WaOCu161dcRfLJf0QSSc6Y45LArKPH+jaj1+XXN6o3GITD0ajDgP4k1hCaQJfM81UkI1f/i43W3Om9T",
-	"ZkuiO1mB4D1bLIDBHzRaw3/nhRLDXrcKdpPAqyJJ0PtJkcIi7XCaL7JMurJSQ1QoQ8mrSbSpGG7fAD7C",
-	"QE9vrCr34q3WP/EUGFtV1huesezd73t4U85wS7OvOCZX4LwhlZd7pXy3FJr1OmMeMKjkdE9l7gq3aZhb",
-	"4r6RCqrS1vQREYEEg99DbcL3ccT0b7Wax+qmSNgUztuwXkmnNmtCE/PMWvWwXihsVYQ9J0izvU9bbpuA",
-	"SoFfNkdaRsZPn47xPy3BxBaVvV3xHcFVfcCoWmf4O6Sjsjp49E5onVzLGnXj8h1SRSSMS7h4GybcwqjW",
-	"RhwvPzWlh43SznfN8jG8ZuA6TLoj1vdYU+8n6f+/cyXX+p9nbbjcXlS+8kXwlTvNXf0h8tno3dvoNZ+k",
-	"DnsDFN9nPIAFbAP0gIaw5VFmtz1sJHn4fHuoFxXrdG15Y/q0pq/lxdb/zQA2dbF1RHU0hy3CeTaKexnF",
-	"tppst40/Dd+DJ+2r3XbyuJWMNrVZxm6m9ZgFfUQD2/4m/Mhm9l5Keza2cuu8ms/n/wUAAP//6hMFVbUd",
-	"AAA=",
+	"H4sIAAAAAAAC/+xYXW/bNhT9KwS3RzV2P7AHv21JUARdsKLp9lIEAi1e22wlUiWv0mqB/vtwSflDH3Zk",
+	"104ybE9xKPry3nPPPTr0PU9MlhsNGh2f3HMLLjfagf/n0lpjP9QrtJAYjaCRPoo8T1UiUBk9+uyMpjWX",
+	"LCAT9OlnCzM+4T+N1tFH4akbNaNWVRVxCS6xKqdgfBKOZXa9I6oj+6TOhZX0N7cmB4sqpKr82szYTCCf",
+	"8EJpfP2KRxzLHPiEK40wB8uriGfmTsFDOV77TVXEtcj85jqOQ6v0nB6UIOywI6uIW/haKAuSTz5RpnXY",
+	"29VeM/0MCVJYqu69wGRBsZuw+GUWtrJvChfM6LRkRgObKUglc4AsB8uUdih0AjxqgTS89JDC0ervlNlh",
+	"VitRcE7M+w5ugbnc2Afl9bLaZmyQigANrEHI3CBALsO3+LoYYa0o6f+Z0MJiHBjYwWk4MTGT07hn+y9v",
+	"BpJqVdlWNJZV/MD4fFFa7oPYO9rfm66P9FCq7+rjDk1XuVjCTBQpbnRnakwKQu/g99aZbUQckvzJhvnw",
+	"yvpzPlmiQsrYK09cEzSmzsfDe7h7wCxk5g5aJ5xu6raAZxx2aSoFitiZwiYDVdc4vBAobsJXli+rNm5N",
+	"6RpUZEOyWuTezPJ2V4EbqXVoQs9YCMJmxrLEgkCl50wwX8MZY3+0eLMwRSrZFIhBZx3W+L6E8g/vDi0p",
+	"PTPdfD9c3nxkv76/8slmQos5JevPYzXcjOB2TGjJEmGlY0ozXAC7UxIMSwSK1MwpcVSY0ql/+QfXFAws",
+	"Ow8b6BAe8TuwLpz88mx8NiZcTQ5a5IpP+Gu/FPFc4MIXP/IH0qc5eF4RMt5rXUk+4b8rh+d+B33HigwQ",
+	"rOOTT+0qr8V3lRUZ00U2BcvMjHnaMDTMAhZWk57Rxq8F2HKpcROeiznETv1Nw7w2dUNe9e0MPpovoD3I",
+	"OUHsa9h1KNL+xqlt/bqNmib11Xi8lzVt0mwF9CAr4L1njwXQ8B3jjfwffKGEY297CdsE8KZIEnBuVqQb",
+	"jpg2raS/L+EVQh23HXFXZJmwZc2jwG0Kmdca1uQaDb4vOxQADn8zstwL8dbkhShsamTZlgrKZW+l2MPV",
+	"UoVbZGLdHbQFVB2SvTza/SeQqNvpc8IB5NG6G+IxwTR888j650FaRvdKVqE3KSB0237h1+vGtzTGDy9p",
+	"1Xp21ZIfawj3VI7uWL/pecv4rCRzq6FIy6PhFYLXLKSovdr7FvBJURmfnIenVJy3gDXAbFqyqwuvO0vj",
+	"2RIeWn5sqA8TuMHvjtW1umXIBujPv7vvf+ZSbMwW6ZCX7Re113rhvdZOw9O+WP1vfn7Y/HRvF4f9KhLu",
+	"+EewRX0JPQuT1HMx2G2ZOvAcri7HuvZvAr3l98fHNUI9PxM9rinqdnWrNA00TD1t/4+Zpz5Mt1upZ4PX",
+	"+FFZfXqL1W3DMMP1lA05ofnq/1X2iY3YUzNlZcp6dbCq/gkAAP//thM53hwcAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
