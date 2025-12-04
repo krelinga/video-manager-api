@@ -83,7 +83,7 @@ type MoviePatch struct {
 type MoviePost struct {
 	// DataSource Data source for creating a movie.  Only one field should be set.
 	DataSource          MoviePostDataSource `json:"data_source"`
-	MovieEditionKindIds *[]uint32           `json:"movie_edition_kind_ids,omitempty"`
+	MovieEditionKindIds []uint32            `json:"movie_edition_kind_ids,omitempty"`
 }
 
 // MoviePostDataSource Data source for creating a movie.  Only one field should be set.

@@ -9,3 +9,4 @@ generate:
   embedded-spec: true
 output-options:
   skip-prune: true
+  prefer-skip-optional-pointer-on-container-types: true
