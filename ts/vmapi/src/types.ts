@@ -34,8 +34,8 @@ export interface paths {
     patch: operations["patchCard"];
   };
   "/inbox/dvd": {
-    /** Get DVDs that have not been ingested to the manager yet. */
-    get: operations["getInboxDVDs"];
+    /** List DVDs that have not been ingested to the manager yet. */
+    get: operations["listInboxDVDs"];
   };
 }
 
@@ -324,8 +324,8 @@ export interface operations {
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** Get DVDs that have not been ingested to the manager yet. */
-  getInboxDVDs: {
+  /** List DVDs that have not been ingested to the manager yet. */
+  listInboxDVDs: {
     parameters: {
       query?: {
         /** @description Maximum number of items to return */

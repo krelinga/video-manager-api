@@ -242,10 +242,10 @@ paths:
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
-  /inbox/dvd:
+  /inbox/dvds:
     get:
-      summary: Get DVDs that have not been ingested to the manager yet.
-      operationId: getInboxDVDs
+      summary: List DVDs that have not been ingested to the manager yet.
+      operationId: listInboxDVDs
       parameters:
         - name: page_size
           in: query
