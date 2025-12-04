@@ -31,6 +31,12 @@ type Card struct {
 	Year  *uint32 `json:"year,omitempty"`
 }
 
+// CardPage defines model for CardPage.
+type CardPage struct {
+	Cards         []Card  `json:"cards"`
+	NextPageToken *string `json:"next_page_token,omitempty"`
+}
+
 // CardPatch Patch object with only one field set per instance
 type CardPatch struct {
 	// Movie Patch object with only one field set per instance
@@ -69,6 +75,12 @@ type MovieEditionKind struct {
 	Id        uint32 `json:"id"`
 	IsDefault bool   `json:"is_default"`
 	Name      string `json:"name"`
+}
+
+// MovieEditionKindPage defines model for MovieEditionKindPage.
+type MovieEditionKindPage struct {
+	MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
+	NextPageToken     *string            `json:"next_page_token,omitempty"`
 }
 
 // MovieEditionKindPatch Patch object with only one field set per instance
@@ -1041,11 +1053,8 @@ type ClientWithResponsesInterface interface {
 type ListCardsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *struct {
-		Cards         []Card  `json:"cards"`
-		NextPageToken *string `json:"next_page_token,omitempty"`
-	}
-	JSONDefault *ErrorResponse
+	JSON200      *CardPage
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1158,11 +1167,8 @@ func (r PatchCardResponse) StatusCode() int {
 type ListMovieEditionKindsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *struct {
-		MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
-		NextPageToken     *string            `json:"next_page_token,omitempty"`
-	}
-	JSONDefault *ErrorResponse
+	JSON200      *MovieEditionKindPage
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -1441,10 +1447,7 @@ func ParseListCardsResponse(rsp *http.Response) (*ListCardsResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Cards         []Card  `json:"cards"`
-			NextPageToken *string `json:"next_page_token,omitempty"`
-		}
+		var dest CardPage
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1602,10 +1605,7 @@ func ParseListMovieEditionKindsResponse(rsp *http.Response) (*ListMovieEditionKi
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
-			NextPageToken     *string            `json:"next_page_token,omitempty"`
-		}
+		var dest MovieEditionKindPage
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2255,10 +2255,7 @@ type ListCardsResponseObject interface {
 	VisitListCardsResponse(w http.ResponseWriter) error
 }
 
-type ListCards200JSONResponse struct {
-	Cards         []Card  `json:"cards"`
-	NextPageToken *string `json:"next_page_token,omitempty"`
-}
+type ListCards200JSONResponse CardPage
 
 func (response ListCards200JSONResponse) VisitListCardsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -2403,10 +2400,7 @@ type ListMovieEditionKindsResponseObject interface {
 	VisitListMovieEditionKindsResponse(w http.ResponseWriter) error
 }
 
-type ListMovieEditionKinds200JSONResponse struct {
-	MovieEditionKinds []MovieEditionKind `json:"movie_edition_kinds"`
-	NextPageToken     *string            `json:"next_page_token,omitempty"`
-}
+type ListMovieEditionKinds200JSONResponse MovieEditionKindPage
 
 func (response ListMovieEditionKinds200JSONResponse) VisitListMovieEditionKindsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -2951,27 +2945,27 @@ func (sh *strictHandler) GetInboxDVDs(w http.ResponseWriter, r *http.Request, pa
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

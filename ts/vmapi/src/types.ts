@@ -52,6 +52,10 @@ export interface components {
       name: string;
       is_default: boolean;
     };
+    MovieEditionKindPage: {
+      movie_edition_kinds: components["schemas"]["MovieEditionKind"][];
+      next_page_token?: string;
+    };
     /** @description Patch object with only one field set per instance */
     MovieEditionKindPatch: {
       name?: string;
@@ -87,6 +91,10 @@ export interface components {
       /** Format: uint32 */
       year?: number;
       movie?: components["schemas"]["Movie"];
+    };
+    CardPage: {
+      cards: components["schemas"]["Card"][];
+      next_page_token?: string;
     };
     /** @description Patch object with only one field set per instance */
     CardPatch: {
@@ -143,10 +151,7 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": {
-            movie_edition_kinds: components["schemas"]["MovieEditionKind"][];
-            next_page_token?: string;
-          };
+          "application/json": components["schemas"]["MovieEditionKindPage"];
         };
       };
       default: components["responses"]["ErrorResponse"];
@@ -240,10 +245,7 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": {
-            cards: components["schemas"]["Card"][];
-            next_page_token?: string;
-          };
+          "application/json": components["schemas"]["CardPage"];
         };
       };
       default: components["responses"]["ErrorResponse"];

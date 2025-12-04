@@ -30,16 +30,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  movie_edition_kinds:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MovieEditionKind'
-                  next_page_token:
-                    type: string
-                required:
-                  - movie_edition_kinds
+                $ref: '#/components/schemas/MovieEditionKindPage'
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
@@ -159,16 +150,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  cards:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Card'
-                  next_page_token:
-                    type: string
-                required:
-                  - cards
+                $ref: '#/components/schemas/CardPage'
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
@@ -323,6 +305,18 @@ components:
         - name
         - is_default
 
+    MovieEditionKindPage:
+      type: object
+      properties:
+        movie_edition_kinds:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieEditionKind'
+        next_page_token:
+          type: string
+      required:
+        - movie_edition_kinds
+
     MovieEditionKindPatch:
       type: object
       description: Patch object with only one field set per instance
@@ -398,6 +392,18 @@ components:
       required:
         - id
         - name
+
+    CardPage:
+      type: object
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+        next_page_token:
+          type: string
+      required:
+        - cards
 
     CardPatch:
       type: object
