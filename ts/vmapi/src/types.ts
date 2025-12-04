@@ -33,7 +33,7 @@ export interface paths {
     /** Update a card */
     patch: operations["patchCard"];
   };
-  "/inbox/dvd": {
+  "/inbox/dvds": {
     /** List DVDs that have not been ingested to the manager yet. */
     get: operations["listInboxDVDs"];
   };
