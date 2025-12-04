@@ -17,7 +17,7 @@ if [ ! -f go.mod ]; then
 fi
 
 echo "==> Generating Go API..."
-oapi-codegen -config ../../config/go.yaml ../../openapi.yml
+oapi-codegen -config ../../config/go.yml ../../openapi.yml
 echo "Generated API code:"
 wc -l api.gen.go
 
