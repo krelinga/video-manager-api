@@ -5,13 +5,13 @@
 
 
 export interface paths {
-  "/movie-edition-kinds": {
+  "/catalog/movie-edition-kinds": {
     /** List movie edition kinds */
     get: operations["listMovieEditionKinds"];
     /** Create a new movie edition kind */
     post: operations["postMovieEditionKind"];
   };
-  "/movie-edition-kinds/{id}": {
+  "/catalog/movie-edition-kinds/{id}": {
     /** Get a movie edition kind by ID */
     get: operations["getMovieEditionKind"];
     /** Delete a movie edition kind */
@@ -19,13 +19,13 @@ export interface paths {
     /** Update a movie edition kind */
     patch: operations["patchMovieEditionKind"];
   };
-  "/cards": {
+  "/catalog/cards": {
     /** List cards */
     get: operations["listCards"];
     /** Create a new card */
     post: operations["postCard"];
   };
-  "/cards/{id}": {
+  "/catalog/cards/{id}": {
     /** Get a card by ID */
     get: operations["getCard"];
     /** Delete a card */

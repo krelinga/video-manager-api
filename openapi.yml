@@ -1,12 +1,12 @@
 openapi: 3.0.0
 info:
-  title: Video Manager Catalog API
+  title: Video Manager API
   version: 1.0.0
-  description: REST API for managing movie edition kinds and cards in the video catalog.
+  description: REST API for communicating with the Video Manager backend service.
 
 paths:
   # MovieEditionKind endpoints
-  /movie-edition-kinds:
+  /catalog/movie-edition-kinds:
     get:
       summary: List movie edition kinds
       operationId: listMovieEditionKinds
@@ -69,7 +69,7 @@ paths:
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
-  /movie-edition-kinds/{id}:
+  /catalog/movie-edition-kinds/{id}:
     get:
       summary: Get a movie edition kind by ID
       operationId: getMovieEditionKind
@@ -135,7 +135,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
   # Card endpoints
-  /cards:
+  /catalog/cards:
     get:
       summary: List cards
       operationId: listCards
@@ -195,7 +195,7 @@ paths:
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
-  /cards/{id}:
+  /catalog/cards/{id}:
     get:
       summary: Get a card by ID
       operationId: getCard

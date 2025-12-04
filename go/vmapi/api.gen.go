@@ -427,7 +427,7 @@ func NewListCardsRequest(server string, params *ListCardsParams) (*http.Request,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/cards")
+	operationPath := fmt.Sprintf("/catalog/cards")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -503,7 +503,7 @@ func NewPostCardRequestWithBody(server string, contentType string, body io.Reade
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/cards")
+	operationPath := fmt.Sprintf("/catalog/cards")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -539,7 +539,7 @@ func NewDeleteCardRequest(server string, id uint32) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/cards/%s", pathParam0)
+	operationPath := fmt.Sprintf("/catalog/cards/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -573,7 +573,7 @@ func NewGetCardRequest(server string, id uint32) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/cards/%s", pathParam0)
+	operationPath := fmt.Sprintf("/catalog/cards/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -618,7 +618,7 @@ func NewPatchCardRequestWithBody(server string, id uint32, contentType string, b
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/cards/%s", pathParam0)
+	operationPath := fmt.Sprintf("/catalog/cards/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -647,7 +647,7 @@ func NewListMovieEditionKindsRequest(server string, params *ListMovieEditionKind
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/movie-edition-kinds")
+	operationPath := fmt.Sprintf("/catalog/movie-edition-kinds")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -723,7 +723,7 @@ func NewPostMovieEditionKindRequestWithBody(server string, contentType string, b
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/movie-edition-kinds")
+	operationPath := fmt.Sprintf("/catalog/movie-edition-kinds")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -759,7 +759,7 @@ func NewDeleteMovieEditionKindRequest(server string, id uint32) (*http.Request, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/movie-edition-kinds/%s", pathParam0)
+	operationPath := fmt.Sprintf("/catalog/movie-edition-kinds/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -793,7 +793,7 @@ func NewGetMovieEditionKindRequest(server string, id uint32) (*http.Request, err
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/movie-edition-kinds/%s", pathParam0)
+	operationPath := fmt.Sprintf("/catalog/movie-edition-kinds/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -838,7 +838,7 @@ func NewPatchMovieEditionKindRequestWithBody(server string, id uint32, contentTy
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/movie-edition-kinds/%s", pathParam0)
+	operationPath := fmt.Sprintf("/catalog/movie-edition-kinds/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1621,34 +1621,34 @@ func ParsePatchMovieEditionKindResponse(rsp *http.Response) (*PatchMovieEditionK
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List cards
-	// (GET /cards)
+	// (GET /catalog/cards)
 	ListCards(w http.ResponseWriter, r *http.Request, params ListCardsParams)
 	// Create a new card
-	// (POST /cards)
+	// (POST /catalog/cards)
 	PostCard(w http.ResponseWriter, r *http.Request)
 	// Delete a card
-	// (DELETE /cards/{id})
+	// (DELETE /catalog/cards/{id})
 	DeleteCard(w http.ResponseWriter, r *http.Request, id uint32)
 	// Get a card by ID
-	// (GET /cards/{id})
+	// (GET /catalog/cards/{id})
 	GetCard(w http.ResponseWriter, r *http.Request, id uint32)
 	// Update a card
-	// (PATCH /cards/{id})
+	// (PATCH /catalog/cards/{id})
 	PatchCard(w http.ResponseWriter, r *http.Request, id uint32)
 	// List movie edition kinds
-	// (GET /movie-edition-kinds)
+	// (GET /catalog/movie-edition-kinds)
 	ListMovieEditionKinds(w http.ResponseWriter, r *http.Request, params ListMovieEditionKindsParams)
 	// Create a new movie edition kind
-	// (POST /movie-edition-kinds)
+	// (POST /catalog/movie-edition-kinds)
 	PostMovieEditionKind(w http.ResponseWriter, r *http.Request)
 	// Delete a movie edition kind
-	// (DELETE /movie-edition-kinds/{id})
+	// (DELETE /catalog/movie-edition-kinds/{id})
 	DeleteMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
 	// Get a movie edition kind by ID
-	// (GET /movie-edition-kinds/{id})
+	// (GET /catalog/movie-edition-kinds/{id})
 	GetMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
 	// Update a movie edition kind
-	// (PATCH /movie-edition-kinds/{id})
+	// (PATCH /catalog/movie-edition-kinds/{id})
 	PatchMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
 }
 
@@ -2029,16 +2029,16 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
-	m.HandleFunc("GET "+options.BaseURL+"/cards", wrapper.ListCards)
-	m.HandleFunc("POST "+options.BaseURL+"/cards", wrapper.PostCard)
-	m.HandleFunc("DELETE "+options.BaseURL+"/cards/{id}", wrapper.DeleteCard)
-	m.HandleFunc("GET "+options.BaseURL+"/cards/{id}", wrapper.GetCard)
-	m.HandleFunc("PATCH "+options.BaseURL+"/cards/{id}", wrapper.PatchCard)
-	m.HandleFunc("GET "+options.BaseURL+"/movie-edition-kinds", wrapper.ListMovieEditionKinds)
-	m.HandleFunc("POST "+options.BaseURL+"/movie-edition-kinds", wrapper.PostMovieEditionKind)
-	m.HandleFunc("DELETE "+options.BaseURL+"/movie-edition-kinds/{id}", wrapper.DeleteMovieEditionKind)
-	m.HandleFunc("GET "+options.BaseURL+"/movie-edition-kinds/{id}", wrapper.GetMovieEditionKind)
-	m.HandleFunc("PATCH "+options.BaseURL+"/movie-edition-kinds/{id}", wrapper.PatchMovieEditionKind)
+	m.HandleFunc("GET "+options.BaseURL+"/catalog/cards", wrapper.ListCards)
+	m.HandleFunc("POST "+options.BaseURL+"/catalog/cards", wrapper.PostCard)
+	m.HandleFunc("DELETE "+options.BaseURL+"/catalog/cards/{id}", wrapper.DeleteCard)
+	m.HandleFunc("GET "+options.BaseURL+"/catalog/cards/{id}", wrapper.GetCard)
+	m.HandleFunc("PATCH "+options.BaseURL+"/catalog/cards/{id}", wrapper.PatchCard)
+	m.HandleFunc("GET "+options.BaseURL+"/catalog/movie-edition-kinds", wrapper.ListMovieEditionKinds)
+	m.HandleFunc("POST "+options.BaseURL+"/catalog/movie-edition-kinds", wrapper.PostMovieEditionKind)
+	m.HandleFunc("DELETE "+options.BaseURL+"/catalog/movie-edition-kinds/{id}", wrapper.DeleteMovieEditionKind)
+	m.HandleFunc("GET "+options.BaseURL+"/catalog/movie-edition-kinds/{id}", wrapper.GetMovieEditionKind)
+	m.HandleFunc("PATCH "+options.BaseURL+"/catalog/movie-edition-kinds/{id}", wrapper.PatchMovieEditionKind)
 
 	return m
 }
@@ -2344,34 +2344,34 @@ func (response PatchMovieEditionKinddefaultJSONResponse) VisitPatchMovieEditionK
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List cards
-	// (GET /cards)
+	// (GET /catalog/cards)
 	ListCards(ctx context.Context, request ListCardsRequestObject) (ListCardsResponseObject, error)
 	// Create a new card
-	// (POST /cards)
+	// (POST /catalog/cards)
 	PostCard(ctx context.Context, request PostCardRequestObject) (PostCardResponseObject, error)
 	// Delete a card
-	// (DELETE /cards/{id})
+	// (DELETE /catalog/cards/{id})
 	DeleteCard(ctx context.Context, request DeleteCardRequestObject) (DeleteCardResponseObject, error)
 	// Get a card by ID
-	// (GET /cards/{id})
+	// (GET /catalog/cards/{id})
 	GetCard(ctx context.Context, request GetCardRequestObject) (GetCardResponseObject, error)
 	// Update a card
-	// (PATCH /cards/{id})
+	// (PATCH /catalog/cards/{id})
 	PatchCard(ctx context.Context, request PatchCardRequestObject) (PatchCardResponseObject, error)
 	// List movie edition kinds
-	// (GET /movie-edition-kinds)
+	// (GET /catalog/movie-edition-kinds)
 	ListMovieEditionKinds(ctx context.Context, request ListMovieEditionKindsRequestObject) (ListMovieEditionKindsResponseObject, error)
 	// Create a new movie edition kind
-	// (POST /movie-edition-kinds)
+	// (POST /catalog/movie-edition-kinds)
 	PostMovieEditionKind(ctx context.Context, request PostMovieEditionKindRequestObject) (PostMovieEditionKindResponseObject, error)
 	// Delete a movie edition kind
-	// (DELETE /movie-edition-kinds/{id})
+	// (DELETE /catalog/movie-edition-kinds/{id})
 	DeleteMovieEditionKind(ctx context.Context, request DeleteMovieEditionKindRequestObject) (DeleteMovieEditionKindResponseObject, error)
 	// Get a movie edition kind by ID
-	// (GET /movie-edition-kinds/{id})
+	// (GET /catalog/movie-edition-kinds/{id})
 	GetMovieEditionKind(ctx context.Context, request GetMovieEditionKindRequestObject) (GetMovieEditionKindResponseObject, error)
 	// Update a movie edition kind
-	// (PATCH /movie-edition-kinds/{id})
+	// (PATCH /catalog/movie-edition-kinds/{id})
 	PatchMovieEditionKind(ctx context.Context, request PatchMovieEditionKindRequestObject) (PatchMovieEditionKindResponseObject, error)
 }
 
@@ -2691,25 +2691,25 @@ func (sh *strictHandler) PatchMovieEditionKind(w http.ResponseWriter, r *http.Re
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
