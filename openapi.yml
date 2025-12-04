@@ -260,6 +260,34 @@ paths:
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
+  /inbox/dvd:
+    get:
+      summary: Get DVDs that have not been ingested to the manager yet.
+      operationId: getInboxDVDs
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response.  Returns paths of DVDs in the inbox.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxPage'
+        'default':
+          $ref: '#/components/responses/ErrorResponse'
+
 components:
   responses:
     ErrorResponse:
@@ -403,3 +431,16 @@ components:
             format: uint32
       required:
         - data_source
+
+    # Inbox types
+    InboxPage:
+      type: object
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        next_page_token:
+          type: string
+      required:
+        - paths

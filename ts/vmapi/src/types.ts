@@ -33,6 +33,10 @@ export interface paths {
     /** Update a card */
     patch: operations["patchCard"];
   };
+  "/inbox/dvd": {
+    /** Get DVDs that have not been ingested to the manager yet. */
+    get: operations["getInboxDVDs"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -99,6 +103,10 @@ export interface components {
     MoviePost: {
       data_source: components["schemas"]["MoviePostDataSource"];
       movie_edition_kind_ids?: number[];
+    };
+    InboxPage: {
+      paths: string[];
+      next_page_token?: string;
     };
   };
   responses: {
@@ -309,6 +317,26 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["Card"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Get DVDs that have not been ingested to the manager yet. */
+  getInboxDVDs: {
+    parameters: {
+      query?: {
+        /** @description Maximum number of items to return */
+        page_size?: number;
+        /** @description Token for pagination */
+        page_token?: string;
+      };
+    };
+    responses: {
+      /** @description Successful response.  Returns paths of DVDs in the inbox. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["InboxPage"];
         };
       };
       default: components["responses"]["ErrorResponse"];

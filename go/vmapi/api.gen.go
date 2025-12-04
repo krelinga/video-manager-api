@@ -44,6 +44,12 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+// InboxPage defines model for InboxPage.
+type InboxPage struct {
+	NextPageToken *string  `json:"next_page_token,omitempty"`
+	Paths         []string `json:"paths"`
+}
+
 // Movie defines model for Movie.
 type Movie struct {
 	Editions []MovieEdition `json:"editions"`
@@ -125,6 +131,15 @@ type PostMovieEditionKindJSONBody struct {
 
 // PatchMovieEditionKindJSONBody defines parameters for PatchMovieEditionKind.
 type PatchMovieEditionKindJSONBody = []MovieEditionKindPatch
+
+// GetInboxDVDsParams defines parameters for GetInboxDVDs.
+type GetInboxDVDsParams struct {
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
 
 // PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
 type PostCardJSONRequestBody PostCardJSONBody
@@ -248,6 +263,9 @@ type ClientInterface interface {
 	PatchMovieEditionKindWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PatchMovieEditionKind(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetInboxDVDs request
+	GetInboxDVDs(ctx context.Context, params *GetInboxDVDsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ListCards(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -408,6 +426,18 @@ func (c *Client) PatchMovieEditionKindWithBody(ctx context.Context, id uint32, c
 
 func (c *Client) PatchMovieEditionKind(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPatchMovieEditionKindRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetInboxDVDs(ctx context.Context, params *GetInboxDVDsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetInboxDVDsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -858,6 +888,71 @@ func NewPatchMovieEditionKindRequestWithBody(server string, id uint32, contentTy
 	return req, nil
 }
 
+// NewGetInboxDVDsRequest generates requests for GetInboxDVDs
+func NewGetInboxDVDsRequest(server string, params *GetInboxDVDsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/inbox/dvd")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_size", runtime.ParamLocationQuery, *params.PageSize); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PageToken != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_token", runtime.ParamLocationQuery, *params.PageToken); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -938,6 +1033,9 @@ type ClientWithResponsesInterface interface {
 	PatchMovieEditionKindWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMovieEditionKindResponse, error)
 
 	PatchMovieEditionKindWithResponse(ctx context.Context, id uint32, body PatchMovieEditionKindJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMovieEditionKindResponse, error)
+
+	// GetInboxDVDsWithResponse request
+	GetInboxDVDsWithResponse(ctx context.Context, params *GetInboxDVDsParams, reqEditors ...RequestEditorFn) (*GetInboxDVDsResponse, error)
 }
 
 type ListCardsResponse struct {
@@ -1174,6 +1272,29 @@ func (r PatchMovieEditionKindResponse) StatusCode() int {
 	return 0
 }
 
+type GetInboxDVDsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *InboxPage
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetInboxDVDsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetInboxDVDsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ListCardsWithResponse request returning *ListCardsResponse
 func (c *ClientWithResponses) ListCardsWithResponse(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*ListCardsResponse, error) {
 	rsp, err := c.ListCards(ctx, params, reqEditors...)
@@ -1294,6 +1415,15 @@ func (c *ClientWithResponses) PatchMovieEditionKindWithResponse(ctx context.Cont
 		return nil, err
 	}
 	return ParsePatchMovieEditionKindResponse(rsp)
+}
+
+// GetInboxDVDsWithResponse request returning *GetInboxDVDsResponse
+func (c *ClientWithResponses) GetInboxDVDsWithResponse(ctx context.Context, params *GetInboxDVDsParams, reqEditors ...RequestEditorFn) (*GetInboxDVDsResponse, error) {
+	rsp, err := c.GetInboxDVDs(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetInboxDVDsResponse(rsp)
 }
 
 // ParseListCardsResponse parses an HTTP response from a ListCardsWithResponse call
@@ -1618,6 +1748,39 @@ func ParsePatchMovieEditionKindResponse(rsp *http.Response) (*PatchMovieEditionK
 	return response, nil
 }
 
+// ParseGetInboxDVDsResponse parses an HTTP response from a GetInboxDVDsWithResponse call
+func ParseGetInboxDVDsResponse(rsp *http.Response) (*GetInboxDVDsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetInboxDVDsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest InboxPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List cards
@@ -1650,6 +1813,9 @@ type ServerInterface interface {
 	// Update a movie edition kind
 	// (PATCH /catalog/movie-edition-kinds/{id})
 	PatchMovieEditionKind(w http.ResponseWriter, r *http.Request, id uint32)
+	// Get DVDs that have not been ingested to the manager yet.
+	// (GET /inbox/dvd)
+	GetInboxDVDs(w http.ResponseWriter, r *http.Request, params GetInboxDVDsParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -1909,6 +2075,41 @@ func (siw *ServerInterfaceWrapper) PatchMovieEditionKind(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r)
 }
 
+// GetInboxDVDs operation middleware
+func (siw *ServerInterfaceWrapper) GetInboxDVDs(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetInboxDVDsParams
+
+	// ------------- Optional query parameter "page_size" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "page_token" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_token", r.URL.Query(), &params.PageToken)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_token", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetInboxDVDs(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -2039,6 +2240,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc("DELETE "+options.BaseURL+"/catalog/movie-edition-kinds/{id}", wrapper.DeleteMovieEditionKind)
 	m.HandleFunc("GET "+options.BaseURL+"/catalog/movie-edition-kinds/{id}", wrapper.GetMovieEditionKind)
 	m.HandleFunc("PATCH "+options.BaseURL+"/catalog/movie-edition-kinds/{id}", wrapper.PatchMovieEditionKind)
+	m.HandleFunc("GET "+options.BaseURL+"/inbox/dvd", wrapper.GetInboxDVDs)
 
 	return m
 }
@@ -2341,6 +2543,35 @@ func (response PatchMovieEditionKinddefaultJSONResponse) VisitPatchMovieEditionK
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
+type GetInboxDVDsRequestObject struct {
+	Params GetInboxDVDsParams
+}
+
+type GetInboxDVDsResponseObject interface {
+	VisitGetInboxDVDsResponse(w http.ResponseWriter) error
+}
+
+type GetInboxDVDs200JSONResponse InboxPage
+
+func (response GetInboxDVDs200JSONResponse) VisitGetInboxDVDsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetInboxDVDsdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetInboxDVDsdefaultJSONResponse) VisitGetInboxDVDsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List cards
@@ -2373,6 +2604,9 @@ type StrictServerInterface interface {
 	// Update a movie edition kind
 	// (PATCH /catalog/movie-edition-kinds/{id})
 	PatchMovieEditionKind(ctx context.Context, request PatchMovieEditionKindRequestObject) (PatchMovieEditionKindResponseObject, error)
+	// Get DVDs that have not been ingested to the manager yet.
+	// (GET /inbox/dvd)
+	GetInboxDVDs(ctx context.Context, request GetInboxDVDsRequestObject) (GetInboxDVDsResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -2688,28 +2922,56 @@ func (sh *strictHandler) PatchMovieEditionKind(w http.ResponseWriter, r *http.Re
 	}
 }
 
+// GetInboxDVDs operation middleware
+func (sh *strictHandler) GetInboxDVDs(w http.ResponseWriter, r *http.Request, params GetInboxDVDsParams) {
+	var request GetInboxDVDsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetInboxDVDs(ctx, request.(GetInboxDVDsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetInboxDVDs")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetInboxDVDsResponseObject); ok {
+		if err := validResponse.VisitGetInboxDVDsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xYW2/bNhT+KwS3RzV2L9iD37YkKIIuWNF0eykCgRaPbbYSqZJHabVA/304pHzRxY7s",
-	"2kmG7SkxRZ3Ldz5++qR7npgsNxo0Oj655xZcbrQD/+PSWmM/1Cu0kBiNoJH+FXmeqkSgMnr02RlNay5Z",
-	"QCbov58tzPiE/zRaRx+Fq27UjFpVVcQluMSqnILxSUjL7HpHVEf2RZ0LK+lvbk0OFlUoVfm1mbGZQD7h",
-	"hdL4+hWPOJY58AlXGmEOllcRz8ydgodqvPabqohrkfnNdRyHVuk5XShB2GEpq4hb+FooC5JPPlGlddjb",
-	"1V4z/QwJUljq7r3AZEGxm7D4ZRa2sm8KF8zotGRGA5spSCVzgCwHy5R2KHQCPGqBNLz1UMLR+u+02WFW",
-	"q1BwTsz7ErfAXG7sg/J62W0zNkhFgAbWIGRuECCX4S6+bkZYK0r6PRNaWIwDAzs4DScmZnIa92z/5c1A",
-	"Uq0624rGsosfOD5flJb7IPaO9veW6yM9VOq7Ot2h5SoXS5iJIsWN6UyNSUHoHfzeemYbEYcUf7LDfHhn",
-	"/TWfrFAhZeyVJ64JGtPk4+Ez3H3ALGTmDloZTnfqtoBnHHZpKgWK2JnCJgNV1zi8EChuwi3Lh1Ubt6Z0",
-	"DWqyIVktcm9WeburwY3SOjShaywEYTNjWWJBoNJzJpjv4YyxP1q8WZgilWwKxKCzDmv8XEL7h0+HlpSe",
-	"mW69Hy5vPrJf31/5YjOhxZyK9flYDTcjuB0TWrJEWOmY0gwXwO6UBMMSgSI1cyocFaaU9S9/4ZqCgWXn",
-	"YQMl4RG/A+tC5pdn47Mx4Wpy0CJXfMJf+6WI5wIXvvlRHX3kE9PKHDy/CCHvua4kn/DflcNzv4PutSID",
-	"BOv45FO722vxXWVFxnSRTcEyM2OePgwNs4CF1aRrtPFrAbZcat2E52IOsVN/06Fem7shj/x2BR/NF9Ae",
-	"7Jyg9j3sSoq0v5G1rWO3UdOsvhqP97KoTbqtgB5kCbwH7bECGr5jvFH/gw+WkPa2l7hNAG+KJAHnZkW6",
-	"4Yxp0+oR0FfwCqGO6464K7JM2LLmUeA4hcxrLWtyjQTAtx0aAIe/GVnuhXjrBIYobGpk2ZYMqmVvxdjD",
-	"3VKHW+RiPR20BVQdkr082ntQIFF30ueEA8ijTTfEY4Jp+OaR9debEjO6V7IKM0oBoTv+C79eE6ClNf4Q",
-	"k3atz7Ba8mQN5Z4K0j3eb3qeOr4qydzqcKTl0XALwWs2UtReDX4L+KSojE/Ox1Mqz1vAGmA2LdnVhdef",
-	"pRFtCRAtPzbUhwnd4GfI6jW7ZdAG6NC/e+5/5lJsnK1NPfIy/qL2YC+8B9tpgNovXP+boR82Q923jsO+",
-	"loR3/yPYpL6CnoVp6nlh2G2hOvAcrjLH+hywCfSW75KPa4x6Ph89rknqTvVBiRpooHrG/x8zU33YbrdW",
-	"zwav8aOy+/SWqzuGYQbsKQdyQjPW/9X2iY3ZUzNlZdJ69bCq/gkAAP//Ng9dmzwcAAA=",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
