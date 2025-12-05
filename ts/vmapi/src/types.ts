@@ -75,36 +75,53 @@ export interface components {
       name?: string;
       is_default?: boolean;
     };
+    MovieEditionKindPost: {
+      name: string;
+      is_default?: boolean;
+    };
     MovieEdition: {
       /** Format: uint32 */
-      id: number;
-      kind: components["schemas"]["MovieEditionKind"];
+      movie_id: number;
+      /** Format: uint32 */
+      kind_id: number;
+    };
+    /** @description Patch object with only one field set per instance */
+    MovieEditionPatch: {
+      /** Format: uint32 */
+      kind_id?: number;
+    };
+    MovieEditionPost: {
+      /** Format: uint32 */
+      movie_id: number;
+      /** Format: uint32 */
+      kind_id: number;
     };
     Movie: {
-      /** Format: uint32 */
-      id: number;
       /** Format: uint64 */
       tmdb_id?: number;
       fanart_id?: string;
-      editions: components["schemas"]["MovieEdition"][];
+      edition_ids: number[];
     };
     /** @description Patch object with only one field set per instance */
     MoviePatch: {
       /** Format: uint64 */
       tmdb_id?: number;
       fanart_id?: string;
-      /** Format: uint32 */
-      add_movie_edition_kind_id?: number;
-      /** Format: uint32 */
-      remove_movie_edition_id?: number;
+    };
+    MoviePost: {
+      /** Format: uint64 */
+      tmdb_id?: number;
     };
     Card: {
       /** Format: uint32 */
       id: number;
       name: string;
-      /** Format: uint32 */
-      year?: number;
+      details: components["schemas"]["CardDetails"];
+    };
+    /** @description Details of the card.  Only one field should be set. */
+    CardDetails: {
       movie?: components["schemas"]["Movie"];
+      movie_edition?: components["schemas"]["MovieEdition"];
     };
     CardPage: {
       cards: components["schemas"]["Card"][];
@@ -116,15 +133,18 @@ export interface components {
       /** Format: uint32 */
       year?: number;
       movie?: components["schemas"]["MoviePatch"];
+      movie_edition?: components["schemas"]["MovieEditionPatch"];
     };
-    /** @description Data source for creating a movie.  Only one field should be set. */
-    MoviePostDataSource: {
-      /** Format: uint64 */
-      tmdb_movie_id?: number;
+    /** @description Request body for creating a card. */
+    CardPost: {
+      details: components["schemas"]["CardPostDetails"];
+      media_ids?: number[];
+      media_set_ids?: number[];
     };
-    MoviePost: {
-      data_source: components["schemas"]["MoviePostDataSource"];
-      movie_edition_kind_ids?: number[];
+    /** @description Details of the created card.  Only one field should be set. */
+    CardPostDetails: {
+      movie?: components["schemas"]["Movie"];
+      movie_edition?: components["schemas"]["MovieEdition"];
     };
     InboxPage: {
       paths: string[];
@@ -133,10 +153,18 @@ export interface components {
     Media: {
       /** Format: uint32 */
       id: number;
+      details?: components["schemas"]["MediaDetails"];
       /** Format: uint32 */
       media_set_id?: number;
-      cards_ids: number[];
+      card_ids: number[];
+    };
+    /** @description Details of the media.  Only one field should be set. */
+    MediaDetails: {
       dvd?: components["schemas"]["DVD"];
+    };
+    MediaPage: {
+      media: components["schemas"]["Media"][];
+      next_page_token?: string;
     };
     /** @description Patch object with only one field set per instance */
     MediaPatch: {
@@ -148,20 +176,16 @@ export interface components {
       remove_card_id?: number;
       dvd?: components["schemas"]["DVDPatch"];
     };
-    MediaPage: {
-      media: components["schemas"]["Media"][];
-      next_page_token?: string;
-    };
     /** @description Request body for creating a media entry. */
     MediaPost: {
+      details: components["schemas"]["MediaPostDetails"];
       /** Format: uint32 */
       media_set_id?: number;
       card_ids?: number[];
-      data_source: components["schemas"]["MediaPostDataSource"];
     };
-    /** @description Data source for creating a media entry.  Only one field should be set. */
-    MediaPostDataSource: {
-      dvd_path?: string;
+    /** @description Details for creating a media entry.  Only one field should be set. */
+    MediaPostDetails: {
+      dvd_inbox_path?: string;
     };
     /** @enum {string} */
     DVDIngestionState: "pending" | "done" | "error";
@@ -180,7 +204,11 @@ export interface components {
       /** Format: uint32 */
       id: number;
       name: string;
-      cards_ids: number[];
+      card_ids: number[];
+    };
+    MediaSetPage: {
+      media_sets: components["schemas"]["MediaSet"][];
+      next_page_token?: string;
     };
     /** @description Patch object with only one field set per instance */
     MediaSetPatch: {
@@ -189,10 +217,14 @@ export interface components {
       add_card_id?: number;
       /** Format: uint32 */
       remove_card_id?: number;
+      /** Format: uint32 */
+      add_media_id?: number;
+      /** Format: uint32 */
+      remove_media_id?: number;
     };
-    MediaSetPage: {
-      media_sets: components["schemas"]["MediaSet"][];
-      next_page_token?: string;
+    MediaSetPost: {
+      name: string;
+      card_ids?: number[];
     };
   };
   responses: {
@@ -239,10 +271,7 @@ export interface operations {
   postMovieEditionKind: {
     requestBody: {
       content: {
-        "application/json": {
-          name: string;
-          is_default?: boolean;
-        };
+        "application/json": components["schemas"]["MovieEditionKindPost"];
       };
     };
     responses: {
@@ -333,9 +362,7 @@ export interface operations {
   postCard: {
     requestBody: {
       content: {
-        "application/json": {
-          movie?: components["schemas"]["MoviePost"];
-        };
+        "application/json": components["schemas"]["CardPost"];
       };
     };
     responses: {

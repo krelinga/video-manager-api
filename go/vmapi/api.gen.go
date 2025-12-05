@@ -32,10 +32,16 @@ const (
 
 // Card defines model for Card.
 type Card struct {
-	Id    uint32  `json:"id"`
-	Movie *Movie  `json:"movie,omitempty"`
-	Name  string  `json:"name"`
-	Year  *uint32 `json:"year,omitempty"`
+	// Details Details of the card.  Only one field should be set.
+	Details CardDetails `json:"details"`
+	Id      uint32      `json:"id"`
+	Name    string      `json:"name"`
+}
+
+// CardDetails Details of the card.  Only one field should be set.
+type CardDetails struct {
+	Movie        *Movie        `json:"movie,omitempty"`
+	MovieEdition *MovieEdition `json:"movie_edition,omitempty"`
 }
 
 // CardPage defines model for CardPage.
@@ -48,8 +54,25 @@ type CardPage struct {
 type CardPatch struct {
 	// Movie Patch object with only one field set per instance
 	Movie *MoviePatch `json:"movie,omitempty"`
-	Name  *string     `json:"name,omitempty"`
-	Year  *uint32     `json:"year,omitempty"`
+
+	// MovieEdition Patch object with only one field set per instance
+	MovieEdition *MovieEditionPatch `json:"movie_edition,omitempty"`
+	Name         *string            `json:"name,omitempty"`
+	Year         *uint32            `json:"year,omitempty"`
+}
+
+// CardPost Request body for creating a card.
+type CardPost struct {
+	// Details Details of the created card.  Only one field should be set.
+	Details     CardPostDetails `json:"details"`
+	MediaIds    []uint32        `json:"media_ids,omitempty"`
+	MediaSetIds []uint32        `json:"media_set_ids,omitempty"`
+}
+
+// CardPostDetails Details of the created card.  Only one field should be set.
+type CardPostDetails struct {
+	Movie        *Movie        `json:"movie,omitempty"`
+	MovieEdition *MovieEdition `json:"movie_edition,omitempty"`
 }
 
 // DVD defines model for DVD.
@@ -82,10 +105,17 @@ type InboxPage struct {
 
 // Media defines model for Media.
 type Media struct {
-	CardsIds   []uint32 `json:"cards_ids"`
-	Dvd        *DVD     `json:"dvd,omitempty"`
-	Id         uint32   `json:"id"`
-	MediaSetId *uint32  `json:"media_set_id,omitempty"`
+	CardIds []uint32 `json:"card_ids"`
+
+	// Details Details of the media.  Only one field should be set.
+	Details    *MediaDetails `json:"details,omitempty"`
+	Id         uint32        `json:"id"`
+	MediaSetId *uint32       `json:"media_set_id,omitempty"`
+}
+
+// MediaDetails Details of the media.  Only one field should be set.
+type MediaDetails struct {
+	Dvd *DVD `json:"dvd,omitempty"`
 }
 
 // MediaPage defines model for MediaPage.
@@ -108,21 +138,21 @@ type MediaPatch struct {
 type MediaPost struct {
 	CardIds []uint32 `json:"card_ids,omitempty"`
 
-	// DataSource Data source for creating a media entry.  Only one field should be set.
-	DataSource MediaPostDataSource `json:"data_source"`
-	MediaSetId *uint32             `json:"media_set_id,omitempty"`
+	// Details Details for creating a media entry.  Only one field should be set.
+	Details    MediaPostDetails `json:"details"`
+	MediaSetId *uint32          `json:"media_set_id,omitempty"`
 }
 
-// MediaPostDataSource Data source for creating a media entry.  Only one field should be set.
-type MediaPostDataSource struct {
-	DvdPath *string `json:"dvd_path,omitempty"`
+// MediaPostDetails Details for creating a media entry.  Only one field should be set.
+type MediaPostDetails struct {
+	DvdInboxPath *string `json:"dvd_inbox_path,omitempty"`
 }
 
 // MediaSet defines model for MediaSet.
 type MediaSet struct {
-	CardsIds []uint32 `json:"cards_ids"`
-	Id       uint32   `json:"id"`
-	Name     string   `json:"name"`
+	CardIds []uint32 `json:"card_ids"`
+	Id      uint32   `json:"id"`
+	Name    string   `json:"name"`
 }
 
 // MediaSetPage defines model for MediaSetPage.
@@ -133,23 +163,30 @@ type MediaSetPage struct {
 
 // MediaSetPatch Patch object with only one field set per instance
 type MediaSetPatch struct {
-	AddCardId    *uint32 `json:"add_card_id,omitempty"`
-	Name         *string `json:"name,omitempty"`
-	RemoveCardId *uint32 `json:"remove_card_id,omitempty"`
+	AddCardId     *uint32 `json:"add_card_id,omitempty"`
+	AddMediaId    *uint32 `json:"add_media_id,omitempty"`
+	Name          *string `json:"name,omitempty"`
+	RemoveCardId  *uint32 `json:"remove_card_id,omitempty"`
+	RemoveMediaId *uint32 `json:"remove_media_id,omitempty"`
+}
+
+// MediaSetPost defines model for MediaSetPost.
+type MediaSetPost struct {
+	CardIds []uint32 `json:"card_ids,omitempty"`
+	Name    string   `json:"name"`
 }
 
 // Movie defines model for Movie.
 type Movie struct {
-	Editions []MovieEdition `json:"editions"`
-	FanartId *string        `json:"fanart_id,omitempty"`
-	Id       uint32         `json:"id"`
-	TmdbId   *uint64        `json:"tmdb_id,omitempty"`
+	EditionIds []uint32 `json:"edition_ids"`
+	FanartId   *string  `json:"fanart_id,omitempty"`
+	TmdbId     *uint64  `json:"tmdb_id,omitempty"`
 }
 
 // MovieEdition defines model for MovieEdition.
 type MovieEdition struct {
-	Id   uint32           `json:"id"`
-	Kind MovieEditionKind `json:"kind"`
+	KindId  uint32 `json:"kind_id"`
+	MovieId uint32 `json:"movie_id"`
 }
 
 // MovieEditionKind defines model for MovieEditionKind.
@@ -171,24 +208,32 @@ type MovieEditionKindPatch struct {
 	Name      *string `json:"name,omitempty"`
 }
 
+// MovieEditionKindPost defines model for MovieEditionKindPost.
+type MovieEditionKindPost struct {
+	IsDefault *bool  `json:"is_default,omitempty"`
+	Name      string `json:"name"`
+}
+
+// MovieEditionPatch Patch object with only one field set per instance
+type MovieEditionPatch struct {
+	KindId *uint32 `json:"kind_id,omitempty"`
+}
+
+// MovieEditionPost defines model for MovieEditionPost.
+type MovieEditionPost struct {
+	KindId  uint32 `json:"kind_id"`
+	MovieId uint32 `json:"movie_id"`
+}
+
 // MoviePatch Patch object with only one field set per instance
 type MoviePatch struct {
-	AddMovieEditionKindId *uint32 `json:"add_movie_edition_kind_id,omitempty"`
-	FanartId              *string `json:"fanart_id,omitempty"`
-	RemoveMovieEditionId  *uint32 `json:"remove_movie_edition_id,omitempty"`
-	TmdbId                *uint64 `json:"tmdb_id,omitempty"`
+	FanartId *string `json:"fanart_id,omitempty"`
+	TmdbId   *uint64 `json:"tmdb_id,omitempty"`
 }
 
 // MoviePost defines model for MoviePost.
 type MoviePost struct {
-	// DataSource Data source for creating a movie.  Only one field should be set.
-	DataSource          MoviePostDataSource `json:"data_source"`
-	MovieEditionKindIds []uint32            `json:"movie_edition_kind_ids,omitempty"`
-}
-
-// MoviePostDataSource Data source for creating a movie.  Only one field should be set.
-type MoviePostDataSource struct {
-	TmdbMovieId *uint64 `json:"tmdb_movie_id,omitempty"`
+	TmdbId *uint64 `json:"tmdb_id,omitempty"`
 }
 
 // ListCardsParams defines parameters for ListCards.
@@ -198,11 +243,6 @@ type ListCardsParams struct {
 
 	// PageToken Token for pagination
 	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
-}
-
-// PostCardJSONBody defines parameters for PostCard.
-type PostCardJSONBody struct {
-	Movie *MoviePost `json:"movie,omitempty"`
 }
 
 // PatchCardJSONBody defines parameters for PatchCard.
@@ -215,12 +255,6 @@ type ListMovieEditionKindsParams struct {
 
 	// PageToken Token for pagination
 	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
-}
-
-// PostMovieEditionKindJSONBody defines parameters for PostMovieEditionKind.
-type PostMovieEditionKindJSONBody struct {
-	IsDefault *bool  `json:"is_default,omitempty"`
-	Name      string `json:"name"`
 }
 
 // PatchMovieEditionKindJSONBody defines parameters for PatchMovieEditionKind.
@@ -248,13 +282,13 @@ type ListMediaParams struct {
 type PatchMediaJSONBody = []MediaPatch
 
 // PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
-type PostCardJSONRequestBody PostCardJSONBody
+type PostCardJSONRequestBody = CardPost
 
 // PatchCardJSONRequestBody defines body for PatchCard for application/json ContentType.
 type PatchCardJSONRequestBody = PatchCardJSONBody
 
 // PostMovieEditionKindJSONRequestBody defines body for PostMovieEditionKind for application/json ContentType.
-type PostMovieEditionKindJSONRequestBody PostMovieEditionKindJSONBody
+type PostMovieEditionKindJSONRequestBody = MovieEditionKindPost
 
 // PatchMovieEditionKindJSONRequestBody defines body for PatchMovieEditionKind for application/json ContentType.
 type PatchMovieEditionKindJSONRequestBody = PatchMovieEditionKindJSONBody
@@ -4166,33 +4200,34 @@ func (sh *strictHandler) PatchMedia(w http.ResponseWriter, r *http.Request, id u
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"tqWXoEDhRfdVarv9NwAA//8rcNgCdjUAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
