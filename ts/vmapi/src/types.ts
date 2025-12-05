@@ -37,6 +37,20 @@ export interface paths {
     /** List DVDs that have not been ingested to the manager yet. */
     get: operations["listInboxDVDs"];
   };
+  "/media": {
+    /** List all media entries. */
+    get: operations["listMedia"];
+    /** Create a new media entry. */
+    post: operations["postMedia"];
+  };
+  "/media/{id}": {
+    /** Get a media entry by ID. */
+    get: operations["getMedia"];
+    /** Delete a media entry. */
+    delete: operations["deleteMedia"];
+    /** Update a media entry. */
+    patch: operations["patchMedia"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -114,6 +128,70 @@ export interface components {
     };
     InboxPage: {
       paths: string[];
+      next_page_token?: string;
+    };
+    Media: {
+      /** Format: uint32 */
+      id: number;
+      /** Format: uint32 */
+      media_set_id?: number;
+      cards_ids: number[];
+      dvd?: components["schemas"]["DVD"];
+    };
+    /** @description Patch object with only one field set per instance */
+    MediaPatch: {
+      /** Format: uint32 */
+      media_set_id?: number;
+      /** Format: uint32 */
+      add_card_id?: number;
+      /** Format: uint32 */
+      remove_card_id?: number;
+      dvd?: components["schemas"]["DVDPatch"];
+    };
+    MediaPage: {
+      media: components["schemas"]["Media"][];
+      next_page_token?: string;
+    };
+    /** @description Request body for creating a media entry. */
+    MediaPost: {
+      /** Format: uint32 */
+      media_set_id?: number;
+      card_ids?: number[];
+      data_source: components["schemas"]["MediaPostDataSource"];
+    };
+    /** @description Data source for creating a media entry.  Only one field should be set. */
+    MediaPostDataSource: {
+      dvd_path?: string;
+    };
+    /** @enum {string} */
+    DVDIngestionState: "pending" | "done" | "error";
+    DVD: {
+      path: string;
+      ingestion_state: components["schemas"]["DVDIngestionState"];
+      ingestion_error?: string;
+    };
+    /** @description Patch object with only one field set per instance */
+    DVDPatch: {
+      path?: string;
+      ingestion_state?: components["schemas"]["DVDIngestionState"];
+      ingestion_error?: string;
+    };
+    MediaSet: {
+      /** Format: uint32 */
+      id: number;
+      name: string;
+      cards_ids: number[];
+    };
+    /** @description Patch object with only one field set per instance */
+    MediaSetPatch: {
+      name?: string;
+      /** Format: uint32 */
+      add_card_id?: number;
+      /** Format: uint32 */
+      remove_card_id?: number;
+    };
+    MediaSetPage: {
+      media_sets: components["schemas"]["MediaSet"][];
       next_page_token?: string;
     };
   };
@@ -339,6 +417,97 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["InboxPage"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** List all media entries. */
+  listMedia: {
+    parameters: {
+      query?: {
+        /** @description Maximum number of items to return */
+        page_size?: number;
+        /** @description Token for pagination */
+        page_token?: string;
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MediaPage"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Create a new media entry. */
+  postMedia: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MediaPost"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        content: {
+          "application/json": components["schemas"]["Media"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Get a media entry by ID. */
+  getMedia: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Media"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Delete a media entry. */
+  deleteMedia: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Deleted successfully */
+      204: {
+        content: never;
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Update a media entry. */
+  patchMedia: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MediaPatch"][];
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Media"];
         };
       };
       default: components["responses"]["ErrorResponse"];

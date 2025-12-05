@@ -1,3 +1,6 @@
+# Guiding principles:
+# - only include full expansion of foreign keys in the case of inheritance.
+
 openapi: 3.0.0
 info:
   title: Video Manager API
@@ -270,6 +273,118 @@ paths:
         'default':
           $ref: '#/components/responses/ErrorResponse'
 
+  /media:
+    get:
+      summary: List all media entries.
+      operationId: listMedia
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaPage'
+        'default':
+          $ref: '#/components/responses/ErrorResponse'
+
+    post:
+      summary: Create a new media entry.
+      operationId: postMedia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaPost'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        'default':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /media/{id}:
+    get:
+      summary: Get a media entry by ID.
+      operationId: getMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        'default':
+          $ref: '#/components/responses/ErrorResponse'
+
+    patch:
+      summary: Update a media entry.
+      operationId: patchMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MediaPatch'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        'default':
+          $ref: '#/components/responses/ErrorResponse'
+
+    delete:
+      summary: Delete a media entry.
+      operationId: deleteMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        '204':
+          description: Deleted successfully
+        'default':
+          $ref: '#/components/responses/ErrorResponse'
+
 components:
   responses:
     ErrorResponse:
@@ -343,6 +458,7 @@ components:
     Movie:
       type: object
       properties:
+        # TODO: get rid of this?  It's redundant with Card.movie.id, and I'm not sure if we'll ever use Movie independent of Card.
         id:
           type: integer
           format: uint32
@@ -450,3 +566,147 @@ components:
           type: string
       required:
         - paths
+
+    # Media types
+    Media:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        media_set_id:
+          type: integer
+          format: uint32
+        cards_ids:
+          type: array
+          items:
+            type: integer
+            format: uint32
+        dvd:
+          $ref: '#/components/schemas/DVD'
+      required:
+        - id
+        - cards_ids
+
+    MediaPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        media_set_id:
+          type: integer
+          format: uint32
+        add_card_id:
+          type: integer
+          format: uint32
+        remove_card_id:
+          type: integer
+          format: uint32
+        dvd:
+          $ref: '#/components/schemas/DVDPatch'
+
+    MediaPage:
+      type: object
+      properties:
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+        next_page_token:
+          type: string
+      required:
+        - media
+
+    MediaPost:
+      type: object
+      description: Request body for creating a media entry.
+      properties:
+        media_set_id:
+          type: integer
+          format: uint32
+        card_ids:
+          type: array
+          items:
+            type: integer
+            format: uint32
+        data_source:
+          $ref: '#/components/schemas/MediaPostDataSource'
+      required:
+        - data_source
+
+    MediaPostDataSource:
+      type: object
+      description: Data source for creating a media entry.  Only one field should be set.
+      properties:
+        dvd_path:
+          type: string
+
+    DVDIngestionState:
+      type: string
+      enum: [pending, done, error]
+
+    DVD:
+      type: object
+      properties:
+        path:
+          type: string
+        ingestion_state:
+          $ref: '#/components/schemas/DVDIngestionState'
+        ingestion_error:
+          type: string
+      required:
+        - path
+        - ingestion_state
+
+    DVDPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        path:
+          type: string
+        ingestion_state:
+          $ref: '#/components/schemas/DVDIngestionState'
+        ingestion_error:
+          type: string
+
+    MediaSet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint32
+        name:
+          type: string
+        cards_ids:
+          type: array
+          items:
+            type: integer
+            format: uint32
+      required:
+        - id
+        - name
+        - cards_ids
+
+    MediaSetPatch:
+      type: object
+      description: Patch object with only one field set per instance
+      properties:
+        name:
+          type: string
+        add_card_id:
+          type: integer
+          format: uint32
+        remove_card_id:
+          type: integer
+          format: uint32
+
+    MediaSetPage:
+      type: object
+      properties:
+        media_sets:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaSet'
+        next_page_token:
+          type: string
+      required:
+        - media_sets
