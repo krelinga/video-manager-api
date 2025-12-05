@@ -137,6 +137,7 @@ export interface components {
     };
     /** @description Request body for creating a card. */
     CardPost: {
+      name: string;
       details: components["schemas"]["CardPostDetails"];
       media_ids?: number[];
       media_set_ids?: number[];

@@ -565,6 +565,8 @@ components:
       type: object
       description: Request body for creating a card.
       properties:
+        name:
+          type: string
         details:
           $ref: '#/components/schemas/CardPostDetails'
         media_ids:
@@ -578,6 +580,7 @@ components:
             type: integer
             format: uint32
       required:
+        - name
         - details
 
     CardPostDetails:
