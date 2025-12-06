@@ -574,6 +574,8 @@ components:
       properties:
         name:
           type: string
+        note:
+          type: string
         details:
           $ref: "#/components/schemas/CardPostDetails"
         media_ids:
@@ -678,6 +680,10 @@ components:
       type: object
       description: Request body for creating a media entry.
       properties:
+        name:
+          type: string
+        note:
+          type: string
         details:
           $ref: "#/components/schemas/MediaPostDetails"
         media_set_id:
@@ -689,6 +695,7 @@ components:
             type: integer
             format: uint32
       required:
+        - name
         - details
 
     MediaPostDetails:
@@ -783,6 +790,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        note:
           type: string
         card_ids:
           type: array
