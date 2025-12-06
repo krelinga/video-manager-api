@@ -117,6 +117,7 @@ export interface components {
       id: number;
       name: string;
       details: components["schemas"]["CardDetails"];
+      note?: string;
     };
     /** @description Details of the card.  Only one field should be set. */
     CardDetails: {
@@ -130,8 +131,7 @@ export interface components {
     /** @description Patch object with only one field set per instance */
     CardPatch: {
       name?: string;
-      /** Format: uint32 */
-      year?: number;
+      note?: string;
       movie?: components["schemas"]["MoviePatch"];
       movie_edition?: components["schemas"]["MovieEditionPatch"];
     };
@@ -155,6 +155,7 @@ export interface components {
       /** Format: uint32 */
       id: number;
       details?: components["schemas"]["MediaDetails"];
+      note?: string;
       /** Format: uint32 */
       media_set_id?: number;
       card_ids: number[];
@@ -169,6 +170,8 @@ export interface components {
     };
     /** @description Patch object with only one field set per instance */
     MediaPatch: {
+      name?: string;
+      note?: string;
       /** Format: uint32 */
       media_set_id?: number;
       /** Format: uint32 */
@@ -205,6 +208,7 @@ export interface components {
       /** Format: uint32 */
       id: number;
       name: string;
+      note?: string;
       card_ids: number[];
     };
     MediaSetPage: {
@@ -214,6 +218,7 @@ export interface components {
     /** @description Patch object with only one field set per instance */
     MediaSetPatch: {
       name?: string;
+      note?: string;
       /** Format: uint32 */
       add_card_id?: number;
       /** Format: uint32 */

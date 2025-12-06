@@ -521,6 +521,8 @@ components:
           type: string
         details:
           $ref: '#/components/schemas/CardDetails'
+        note:
+          type: string
       required:
         - id
         - name
@@ -553,9 +555,8 @@ components:
       properties:
         name:
           type: string
-        year:
-          type: integer
-          format: uint32
+        note:
+          type: string
         movie:
           $ref: '#/components/schemas/MoviePatch'
         movie_edition:
@@ -614,6 +615,8 @@ components:
           format: uint32
         details:
           $ref: '#/components/schemas/MediaDetails'
+        note:
+          type: string
         media_set_id:
           type: integer
           format: uint32
@@ -649,6 +652,10 @@ components:
       type: object
       description: Patch object with only one field set per instance
       properties:
+        name:
+          type: string
+        note:
+          type: string
         media_set_id:
           type: integer
           format: uint32
@@ -721,6 +728,8 @@ components:
           format: uint32
         name:
           type: string
+        note:
+          type: string
         card_ids:
           type: array
           items:
@@ -748,6 +757,8 @@ components:
       description: Patch object with only one field set per instance
       properties:
         name:
+          type: string
+        note:
           type: string
         add_card_id:
           type: integer
