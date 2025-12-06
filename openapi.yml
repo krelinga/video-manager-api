@@ -28,14 +28,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieEditionKindPage'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/MovieEditionKindPage"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     post:
       summary: Create a new movie edition kind
@@ -45,16 +45,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieEditionKindPost'
+              $ref: "#/components/schemas/MovieEditionKindPost"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieEditionKind'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/MovieEditionKind"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
   /catalog/movie-edition-kinds/{id}:
     get:
@@ -68,14 +68,14 @@ paths:
             type: integer
             format: uint32
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieEditionKind'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/MovieEditionKind"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     patch:
       summary: Update a movie edition kind
@@ -94,16 +94,16 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/MovieEditionKindPatch'
+                $ref: "#/components/schemas/MovieEditionKindPatch"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieEditionKind'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/MovieEditionKind"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     delete:
       summary: Delete a movie edition kind
@@ -116,10 +116,10 @@ paths:
             type: integer
             format: uint32
       responses:
-        '204':
+        "204":
           description: Deleted successfully
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
   # Card endpoints
   /catalog/cards:
@@ -141,14 +141,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CardPage'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/CardPage"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     post:
       summary: Create a new card
@@ -158,16 +158,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CardPost'
+              $ref: "#/components/schemas/CardPost"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Card'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Card"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
   /catalog/cards/{id}:
     get:
@@ -181,14 +181,14 @@ paths:
             type: integer
             format: uint32
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Card'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Card"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     patch:
       summary: Update a card
@@ -207,16 +207,16 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/CardPatch'
+                $ref: "#/components/schemas/CardPatch"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Card'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Card"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     delete:
       summary: Delete a card
@@ -229,10 +229,10 @@ paths:
             type: integer
             format: uint32
       responses:
-        '204':
+        "204":
           description: Deleted successfully
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
   /inbox/dvds:
     get:
@@ -253,14 +253,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response.  Returns paths of DVDs in the inbox.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InboxPage'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/InboxPage"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
   /media:
     get:
@@ -281,14 +281,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MediaPage'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/MediaPage"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     post:
       summary: Create a new media entry.
@@ -298,16 +298,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MediaPost'
+              $ref: "#/components/schemas/MediaPost"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Media'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Media"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
   /media/{id}:
     get:
@@ -321,14 +321,14 @@ paths:
             type: integer
             format: uint32
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Media'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Media"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     patch:
       summary: Update a media entry.
@@ -347,16 +347,16 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/MediaPatch'
+                $ref: "#/components/schemas/MediaPatch"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Media'
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Media"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
     delete:
       summary: Delete a media entry.
@@ -369,10 +369,10 @@ paths:
             type: integer
             format: uint32
       responses:
-        '204':
+        "204":
           description: Deleted successfully
-        'default':
-          $ref: '#/components/responses/ErrorResponse'
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
 
 components:
   responses:
@@ -381,7 +381,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: "#/components/schemas/ErrorResponse"
 
   schemas:
     # Common error type
@@ -415,7 +415,7 @@ components:
         movie_edition_kinds:
           type: array
           items:
-            $ref: '#/components/schemas/MovieEditionKind'
+            $ref: "#/components/schemas/MovieEditionKind"
         next_page_token:
           type: string
       required:
@@ -520,7 +520,7 @@ components:
         name:
           type: string
         details:
-          $ref: '#/components/schemas/CardDetails'
+          $ref: "#/components/schemas/CardDetails"
         note:
           type: string
       required:
@@ -533,9 +533,9 @@ components:
       description: Details of the card.  Only one field should be set.
       properties:
         movie:
-          $ref: '#/components/schemas/Movie'
+          $ref: "#/components/schemas/Movie"
         movie_edition:
-          $ref: '#/components/schemas/MovieEdition'
+          $ref: "#/components/schemas/MovieEdition"
 
     CardPage:
       type: object
@@ -543,7 +543,7 @@ components:
         cards:
           type: array
           items:
-            $ref: '#/components/schemas/Card'
+            $ref: "#/components/schemas/Card"
         next_page_token:
           type: string
       required:
@@ -558,9 +558,9 @@ components:
         note:
           type: string
         movie:
-          $ref: '#/components/schemas/MoviePatch'
+          $ref: "#/components/schemas/MoviePatch"
         movie_edition:
-          $ref: '#/components/schemas/MovieEditionPatch'
+          $ref: "#/components/schemas/MovieEditionPatch"
 
     CardPost:
       type: object
@@ -569,7 +569,7 @@ components:
         name:
           type: string
         details:
-          $ref: '#/components/schemas/CardPostDetails'
+          $ref: "#/components/schemas/CardPostDetails"
         media_ids:
           type: array
           items:
@@ -589,9 +589,9 @@ components:
       description: Details of the created card.  Only one field should be set.
       properties:
         movie:
-          $ref: '#/components/schemas/Movie'
+          $ref: "#/components/schemas/Movie"
         movie_edition:
-          $ref: '#/components/schemas/MovieEdition'
+          $ref: "#/components/schemas/MovieEdition"
 
     # Inbox types
     InboxPage:
@@ -614,7 +614,7 @@ components:
           type: integer
           format: uint32
         details:
-          $ref: '#/components/schemas/MediaDetails'
+          $ref: "#/components/schemas/MediaDetails"
         note:
           type: string
         media_set_id:
@@ -628,13 +628,13 @@ components:
       required:
         - id
         - card_ids
-    
+
     MediaDetails:
       type: object
       description: Details of the media.  Only one field should be set.
       properties:
         dvd:
-          $ref: '#/components/schemas/DVD'
+          $ref: "#/components/schemas/DVD"
 
     MediaPage:
       type: object
@@ -642,7 +642,7 @@ components:
         media:
           type: array
           items:
-            $ref: '#/components/schemas/Media'
+            $ref: "#/components/schemas/Media"
         next_page_token:
           type: string
       required:
@@ -666,14 +666,14 @@ components:
           type: integer
           format: uint32
         dvd:
-          $ref: '#/components/schemas/DVDPatch'
+          $ref: "#/components/schemas/DVDPatch"
 
     MediaPost:
       type: object
       description: Request body for creating a media entry.
       properties:
         details:
-          $ref: '#/components/schemas/MediaPostDetails'
+          $ref: "#/components/schemas/MediaPostDetails"
         media_set_id:
           type: integer
           format: uint32
@@ -702,7 +702,7 @@ components:
         path:
           type: string
         ingestion_state:
-          $ref: '#/components/schemas/DVDIngestionState'
+          $ref: "#/components/schemas/DVDIngestionState"
         ingestion_error:
           type: string
       required:
@@ -716,7 +716,7 @@ components:
         path:
           type: string
         ingestion_state:
-          $ref: '#/components/schemas/DVDIngestionState'
+          $ref: "#/components/schemas/DVDIngestionState"
         ingestion_error:
           type: string
 
@@ -746,7 +746,7 @@ components:
         media_sets:
           type: array
           items:
-            $ref: '#/components/schemas/MediaSet'
+            $ref: "#/components/schemas/MediaSet"
         next_page_token:
           type: string
       required:
