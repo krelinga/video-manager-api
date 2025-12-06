@@ -493,7 +493,6 @@ components:
             type: integer
             format: uint32
       required:
-        - id
         - edition_ids
 
     MoviePatch:
