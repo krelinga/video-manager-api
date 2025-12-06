@@ -1,7 +1,7 @@
 # Guiding principles:
 # - only include full expansion of foreign keys in the case of inheritance.
 
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: Video Manager API
   version: 1.0.0
