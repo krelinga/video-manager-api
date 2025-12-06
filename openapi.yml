@@ -484,6 +484,9 @@ components:
           format: uint64
         fanart_id:
           type: string
+        release_year:
+          type: integer
+          format: uint32
         edition_ids:
           type: array
           items:
@@ -502,6 +505,9 @@ components:
           format: uint64
         fanart_id:
           type: string
+        release_year:
+          type: integer
+          format: uint32
 
     MoviePost:
       type: object

@@ -100,6 +100,8 @@ export interface components {
       /** Format: uint64 */
       tmdb_id?: number;
       fanart_id?: string;
+      /** Format: uint32 */
+      release_year?: number;
       edition_ids: number[];
     };
     /** @description Patch object with only one field set per instance */
@@ -107,6 +109,8 @@ export interface components {
       /** Format: uint64 */
       tmdb_id?: number;
       fanart_id?: string;
+      /** Format: uint32 */
+      release_year?: number;
     };
     MoviePost: {
       /** Format: uint64 */
