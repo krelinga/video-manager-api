@@ -895,6 +895,8 @@ components:
           type: string
         note:
           type: string
+        clear_note:
+          type: boolean
         add_card_id:
           type: integer
           format: uint32

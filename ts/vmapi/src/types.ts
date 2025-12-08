@@ -246,6 +246,7 @@ export interface components {
     MediaSetPatch: {
       name?: string;
       note?: string;
+      clear_note?: boolean;
       /** Format: uint32 */
       add_card_id?: number;
       /** Format: uint32 */
