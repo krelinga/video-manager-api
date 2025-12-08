@@ -51,6 +51,20 @@ export interface paths {
     /** Update a media entry. */
     patch: operations["patchMedia"];
   };
+  "/media_sets": {
+    /** List all media sets. */
+    get: operations["listMediaSets"];
+    /** Create a new media set. */
+    post: operations["postMediaSet"];
+  };
+  "/media_sets/{id}": {
+    /** Get a media set by ID. */
+    get: operations["getMediaSet"];
+    /** Delete a media set. */
+    delete: operations["deleteMediaSet"];
+    /** Update a media set. */
+    patch: operations["patchMediaSet"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -142,6 +156,7 @@ export interface components {
     /** @description Request body for creating a card. */
     CardPost: {
       name: string;
+      note?: string;
       details: components["schemas"]["CardPostDetails"];
       media_ids?: number[];
       media_set_ids?: number[];
@@ -186,6 +201,8 @@ export interface components {
     };
     /** @description Request body for creating a media entry. */
     MediaPost: {
+      name: string;
+      note?: string;
       details: components["schemas"]["MediaPostDetails"];
       /** Format: uint32 */
       media_set_id?: number;
@@ -234,6 +251,7 @@ export interface components {
     };
     MediaSetPost: {
       name: string;
+      note?: string;
       card_ids?: number[];
     };
   };
@@ -545,6 +563,97 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["Media"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** List all media sets. */
+  listMediaSets: {
+    parameters: {
+      query?: {
+        /** @description Maximum number of items to return */
+        page_size?: number;
+        /** @description Token for pagination */
+        page_token?: string;
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MediaSetPage"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Create a new media set. */
+  postMediaSet: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MediaSetPost"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        content: {
+          "application/json": components["schemas"]["MediaSet"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Get a media set by ID. */
+  getMediaSet: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MediaSet"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Delete a media set. */
+  deleteMediaSet: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Deleted successfully */
+      204: {
+        content: never;
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Update a media set. */
+  patchMediaSet: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MediaSetPatch"][];
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MediaSet"];
         };
       };
       default: components["responses"]["ErrorResponse"];

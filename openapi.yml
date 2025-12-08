@@ -374,6 +374,118 @@ paths:
         "default":
           $ref: "#/components/responses/ErrorResponse"
 
+  /media_sets:
+    get:
+      summary: List all media sets.
+      operationId: listMediaSets
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaSetPage"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
+
+    post:
+      summary: Create a new media set.
+      operationId: postMediaSet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MediaSetPost"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaSet"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
+
+  /media_sets/{id}:
+    get:
+      summary: Get a media set by ID.
+      operationId: getMediaSet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaSet"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
+
+    patch:
+      summary: Update a media set.
+      operationId: patchMediaSet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/MediaSetPatch"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaSet"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
+
+    delete:
+      summary: Delete a media set.
+      operationId: deleteMediaSet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint32
+      responses:
+        "204":
+          description: Deleted successfully
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
+
 components:
   responses:
     ErrorResponse:

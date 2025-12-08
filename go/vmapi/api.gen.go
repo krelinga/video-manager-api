@@ -294,6 +294,18 @@ type ListMediaParams struct {
 // PatchMediaJSONBody defines parameters for PatchMedia.
 type PatchMediaJSONBody = []MediaPatch
 
+// ListMediaSetsParams defines parameters for ListMediaSets.
+type ListMediaSetsParams struct {
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
+
+// PatchMediaSetJSONBody defines parameters for PatchMediaSet.
+type PatchMediaSetJSONBody = []MediaSetPatch
+
 // PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
 type PostCardJSONRequestBody = CardPost
 
@@ -311,6 +323,12 @@ type PostMediaJSONRequestBody = MediaPost
 
 // PatchMediaJSONRequestBody defines body for PatchMedia for application/json ContentType.
 type PatchMediaJSONRequestBody = PatchMediaJSONBody
+
+// PostMediaSetJSONRequestBody defines body for PostMediaSet for application/json ContentType.
+type PostMediaSetJSONRequestBody = MediaSetPost
+
+// PatchMediaSetJSONRequestBody defines body for PatchMediaSet for application/json ContentType.
+type PatchMediaSetJSONRequestBody = PatchMediaSetJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -444,6 +462,25 @@ type ClientInterface interface {
 	PatchMediaWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PatchMedia(ctx context.Context, id uint32, body PatchMediaJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListMediaSets request
+	ListMediaSets(ctx context.Context, params *ListMediaSetsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostMediaSetWithBody request with any body
+	PostMediaSetWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PostMediaSet(ctx context.Context, body PostMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteMediaSet request
+	DeleteMediaSet(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMediaSet request
+	GetMediaSet(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PatchMediaSetWithBody request with any body
+	PatchMediaSetWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PatchMediaSet(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ListCards(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -700,6 +737,90 @@ func (c *Client) PatchMediaWithBody(ctx context.Context, id uint32, contentType 
 
 func (c *Client) PatchMedia(ctx context.Context, id uint32, body PatchMediaJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPatchMediaRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListMediaSets(ctx context.Context, params *ListMediaSetsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMediaSetsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostMediaSetWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostMediaSetRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostMediaSet(ctx context.Context, body PostMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostMediaSetRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteMediaSet(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteMediaSetRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetMediaSet(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMediaSetRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchMediaSetWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchMediaSetRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchMediaSet(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchMediaSetRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1435,6 +1556,226 @@ func NewPatchMediaRequestWithBody(server string, id uint32, contentType string, 
 	return req, nil
 }
 
+// NewListMediaSetsRequest generates requests for ListMediaSets
+func NewListMediaSetsRequest(server string, params *ListMediaSetsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media_sets")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_size", runtime.ParamLocationQuery, *params.PageSize); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PageToken != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_token", runtime.ParamLocationQuery, *params.PageToken); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostMediaSetRequest calls the generic PostMediaSet builder with application/json body
+func NewPostMediaSetRequest(server string, body PostMediaSetJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPostMediaSetRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewPostMediaSetRequestWithBody generates requests for PostMediaSet with any type of body
+func NewPostMediaSetRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media_sets")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteMediaSetRequest generates requests for DeleteMediaSet
+func NewDeleteMediaSetRequest(server string, id uint32) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media_sets/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetMediaSetRequest generates requests for GetMediaSet
+func NewGetMediaSetRequest(server string, id uint32) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media_sets/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPatchMediaSetRequest calls the generic PatchMediaSet builder with application/json body
+func NewPatchMediaSetRequest(server string, id uint32, body PatchMediaSetJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPatchMediaSetRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewPatchMediaSetRequestWithBody generates requests for PatchMediaSet with any type of body
+func NewPatchMediaSetRequestWithBody(server string, id uint32, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media_sets/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -1537,6 +1878,25 @@ type ClientWithResponsesInterface interface {
 	PatchMediaWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMediaResponse, error)
 
 	PatchMediaWithResponse(ctx context.Context, id uint32, body PatchMediaJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMediaResponse, error)
+
+	// ListMediaSetsWithResponse request
+	ListMediaSetsWithResponse(ctx context.Context, params *ListMediaSetsParams, reqEditors ...RequestEditorFn) (*ListMediaSetsResponse, error)
+
+	// PostMediaSetWithBodyWithResponse request with any body
+	PostMediaSetWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostMediaSetResponse, error)
+
+	PostMediaSetWithResponse(ctx context.Context, body PostMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*PostMediaSetResponse, error)
+
+	// DeleteMediaSetWithResponse request
+	DeleteMediaSetWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*DeleteMediaSetResponse, error)
+
+	// GetMediaSetWithResponse request
+	GetMediaSetWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*GetMediaSetResponse, error)
+
+	// PatchMediaSetWithBodyWithResponse request with any body
+	PatchMediaSetWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMediaSetResponse, error)
+
+	PatchMediaSetWithResponse(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMediaSetResponse, error)
 }
 
 type ListCardsResponse struct {
@@ -1904,6 +2264,120 @@ func (r PatchMediaResponse) StatusCode() int {
 	return 0
 }
 
+type ListMediaSetsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MediaSetPage
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r ListMediaSetsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListMediaSetsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostMediaSetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *MediaSet
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PostMediaSetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostMediaSetResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteMediaSetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteMediaSetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteMediaSetResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetMediaSetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MediaSet
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMediaSetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMediaSetResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PatchMediaSetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MediaSet
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PatchMediaSetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PatchMediaSetResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ListCardsWithResponse request returning *ListCardsResponse
 func (c *ClientWithResponses) ListCardsWithResponse(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*ListCardsResponse, error) {
 	rsp, err := c.ListCards(ctx, params, reqEditors...)
@@ -2094,6 +2568,67 @@ func (c *ClientWithResponses) PatchMediaWithResponse(ctx context.Context, id uin
 		return nil, err
 	}
 	return ParsePatchMediaResponse(rsp)
+}
+
+// ListMediaSetsWithResponse request returning *ListMediaSetsResponse
+func (c *ClientWithResponses) ListMediaSetsWithResponse(ctx context.Context, params *ListMediaSetsParams, reqEditors ...RequestEditorFn) (*ListMediaSetsResponse, error) {
+	rsp, err := c.ListMediaSets(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListMediaSetsResponse(rsp)
+}
+
+// PostMediaSetWithBodyWithResponse request with arbitrary body returning *PostMediaSetResponse
+func (c *ClientWithResponses) PostMediaSetWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostMediaSetResponse, error) {
+	rsp, err := c.PostMediaSetWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostMediaSetResponse(rsp)
+}
+
+func (c *ClientWithResponses) PostMediaSetWithResponse(ctx context.Context, body PostMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*PostMediaSetResponse, error) {
+	rsp, err := c.PostMediaSet(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostMediaSetResponse(rsp)
+}
+
+// DeleteMediaSetWithResponse request returning *DeleteMediaSetResponse
+func (c *ClientWithResponses) DeleteMediaSetWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*DeleteMediaSetResponse, error) {
+	rsp, err := c.DeleteMediaSet(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteMediaSetResponse(rsp)
+}
+
+// GetMediaSetWithResponse request returning *GetMediaSetResponse
+func (c *ClientWithResponses) GetMediaSetWithResponse(ctx context.Context, id uint32, reqEditors ...RequestEditorFn) (*GetMediaSetResponse, error) {
+	rsp, err := c.GetMediaSet(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMediaSetResponse(rsp)
+}
+
+// PatchMediaSetWithBodyWithResponse request with arbitrary body returning *PatchMediaSetResponse
+func (c *ClientWithResponses) PatchMediaSetWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMediaSetResponse, error) {
+	rsp, err := c.PatchMediaSetWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchMediaSetResponse(rsp)
+}
+
+func (c *ClientWithResponses) PatchMediaSetWithResponse(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMediaSetResponse, error) {
+	rsp, err := c.PatchMediaSet(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchMediaSetResponse(rsp)
 }
 
 // ParseListCardsResponse parses an HTTP response from a ListCardsWithResponse call
@@ -2603,6 +3138,164 @@ func ParsePatchMediaResponse(rsp *http.Response) (*PatchMediaResponse, error) {
 	return response, nil
 }
 
+// ParseListMediaSetsResponse parses an HTTP response from a ListMediaSetsWithResponse call
+func ParseListMediaSetsResponse(rsp *http.Response) (*ListMediaSetsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListMediaSetsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MediaSetPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePostMediaSetResponse parses an HTTP response from a PostMediaSetWithResponse call
+func ParsePostMediaSetResponse(rsp *http.Response) (*PostMediaSetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostMediaSetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest MediaSet
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteMediaSetResponse parses an HTTP response from a DeleteMediaSetWithResponse call
+func ParseDeleteMediaSetResponse(rsp *http.Response) (*DeleteMediaSetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteMediaSetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetMediaSetResponse parses an HTTP response from a GetMediaSetWithResponse call
+func ParseGetMediaSetResponse(rsp *http.Response) (*GetMediaSetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMediaSetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MediaSet
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePatchMediaSetResponse parses an HTTP response from a PatchMediaSetWithResponse call
+func ParsePatchMediaSetResponse(rsp *http.Response) (*PatchMediaSetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PatchMediaSetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MediaSet
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List cards
@@ -2653,6 +3346,21 @@ type ServerInterface interface {
 	// Update a media entry.
 	// (PATCH /media/{id})
 	PatchMedia(w http.ResponseWriter, r *http.Request, id uint32)
+	// List all media sets.
+	// (GET /media_sets)
+	ListMediaSets(w http.ResponseWriter, r *http.Request, params ListMediaSetsParams)
+	// Create a new media set.
+	// (POST /media_sets)
+	PostMediaSet(w http.ResponseWriter, r *http.Request)
+	// Delete a media set.
+	// (DELETE /media_sets/{id})
+	DeleteMediaSet(w http.ResponseWriter, r *http.Request, id uint32)
+	// Get a media set by ID.
+	// (GET /media_sets/{id})
+	GetMediaSet(w http.ResponseWriter, r *http.Request, id uint32)
+	// Update a media set.
+	// (PATCH /media_sets/{id})
+	PatchMediaSet(w http.ResponseWriter, r *http.Request, id uint32)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -3071,6 +3779,130 @@ func (siw *ServerInterfaceWrapper) PatchMedia(w http.ResponseWriter, r *http.Req
 	handler.ServeHTTP(w, r)
 }
 
+// ListMediaSets operation middleware
+func (siw *ServerInterfaceWrapper) ListMediaSets(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListMediaSetsParams
+
+	// ------------- Optional query parameter "page_size" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "page_token" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_token", r.URL.Query(), &params.PageToken)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_token", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListMediaSets(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostMediaSet operation middleware
+func (siw *ServerInterfaceWrapper) PostMediaSet(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostMediaSet(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteMediaSet operation middleware
+func (siw *ServerInterfaceWrapper) DeleteMediaSet(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteMediaSet(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMediaSet operation middleware
+func (siw *ServerInterfaceWrapper) GetMediaSet(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMediaSet(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PatchMediaSet operation middleware
+func (siw *ServerInterfaceWrapper) PatchMediaSet(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id uint32
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PatchMediaSet(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -3207,6 +4039,11 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc("DELETE "+options.BaseURL+"/media/{id}", wrapper.DeleteMedia)
 	m.HandleFunc("GET "+options.BaseURL+"/media/{id}", wrapper.GetMedia)
 	m.HandleFunc("PATCH "+options.BaseURL+"/media/{id}", wrapper.PatchMedia)
+	m.HandleFunc("GET "+options.BaseURL+"/media_sets", wrapper.ListMediaSets)
+	m.HandleFunc("POST "+options.BaseURL+"/media_sets", wrapper.PostMediaSet)
+	m.HandleFunc("DELETE "+options.BaseURL+"/media_sets/{id}", wrapper.DeleteMediaSet)
+	m.HandleFunc("GET "+options.BaseURL+"/media_sets/{id}", wrapper.GetMediaSet)
+	m.HandleFunc("PATCH "+options.BaseURL+"/media_sets/{id}", wrapper.PatchMediaSet)
 
 	return m
 }
@@ -3677,6 +4514,151 @@ func (response PatchMediadefaultJSONResponse) VisitPatchMediaResponse(w http.Res
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
+type ListMediaSetsRequestObject struct {
+	Params ListMediaSetsParams
+}
+
+type ListMediaSetsResponseObject interface {
+	VisitListMediaSetsResponse(w http.ResponseWriter) error
+}
+
+type ListMediaSets200JSONResponse MediaSetPage
+
+func (response ListMediaSets200JSONResponse) VisitListMediaSetsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ListMediaSetsdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ListMediaSetsdefaultJSONResponse) VisitListMediaSetsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type PostMediaSetRequestObject struct {
+	Body *PostMediaSetJSONRequestBody
+}
+
+type PostMediaSetResponseObject interface {
+	VisitPostMediaSetResponse(w http.ResponseWriter) error
+}
+
+type PostMediaSet201JSONResponse MediaSet
+
+func (response PostMediaSet201JSONResponse) VisitPostMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostMediaSetdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response PostMediaSetdefaultJSONResponse) VisitPostMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type DeleteMediaSetRequestObject struct {
+	Id uint32 `json:"id"`
+}
+
+type DeleteMediaSetResponseObject interface {
+	VisitDeleteMediaSetResponse(w http.ResponseWriter) error
+}
+
+type DeleteMediaSet204Response struct {
+}
+
+func (response DeleteMediaSet204Response) VisitDeleteMediaSetResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteMediaSetdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response DeleteMediaSetdefaultJSONResponse) VisitDeleteMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type GetMediaSetRequestObject struct {
+	Id uint32 `json:"id"`
+}
+
+type GetMediaSetResponseObject interface {
+	VisitGetMediaSetResponse(w http.ResponseWriter) error
+}
+
+type GetMediaSet200JSONResponse MediaSet
+
+func (response GetMediaSet200JSONResponse) VisitGetMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetMediaSetdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetMediaSetdefaultJSONResponse) VisitGetMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type PatchMediaSetRequestObject struct {
+	Id   uint32 `json:"id"`
+	Body *PatchMediaSetJSONRequestBody
+}
+
+type PatchMediaSetResponseObject interface {
+	VisitPatchMediaSetResponse(w http.ResponseWriter) error
+}
+
+type PatchMediaSet200JSONResponse MediaSet
+
+func (response PatchMediaSet200JSONResponse) VisitPatchMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchMediaSetdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response PatchMediaSetdefaultJSONResponse) VisitPatchMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List cards
@@ -3727,6 +4709,21 @@ type StrictServerInterface interface {
 	// Update a media entry.
 	// (PATCH /media/{id})
 	PatchMedia(ctx context.Context, request PatchMediaRequestObject) (PatchMediaResponseObject, error)
+	// List all media sets.
+	// (GET /media_sets)
+	ListMediaSets(ctx context.Context, request ListMediaSetsRequestObject) (ListMediaSetsResponseObject, error)
+	// Create a new media set.
+	// (POST /media_sets)
+	PostMediaSet(ctx context.Context, request PostMediaSetRequestObject) (PostMediaSetResponseObject, error)
+	// Delete a media set.
+	// (DELETE /media_sets/{id})
+	DeleteMediaSet(ctx context.Context, request DeleteMediaSetRequestObject) (DeleteMediaSetResponseObject, error)
+	// Get a media set by ID.
+	// (GET /media_sets/{id})
+	GetMediaSet(ctx context.Context, request GetMediaSetRequestObject) (GetMediaSetResponseObject, error)
+	// Update a media set.
+	// (PATCH /media_sets/{id})
+	PatchMediaSet(ctx context.Context, request PatchMediaSetRequestObject) (PatchMediaSetResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -4210,37 +5207,181 @@ func (sh *strictHandler) PatchMedia(w http.ResponseWriter, r *http.Request, id u
 	}
 }
 
+// ListMediaSets operation middleware
+func (sh *strictHandler) ListMediaSets(w http.ResponseWriter, r *http.Request, params ListMediaSetsParams) {
+	var request ListMediaSetsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListMediaSets(ctx, request.(ListMediaSetsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListMediaSets")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListMediaSetsResponseObject); ok {
+		if err := validResponse.VisitListMediaSetsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostMediaSet operation middleware
+func (sh *strictHandler) PostMediaSet(w http.ResponseWriter, r *http.Request) {
+	var request PostMediaSetRequestObject
+
+	var body PostMediaSetJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostMediaSet(ctx, request.(PostMediaSetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostMediaSet")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostMediaSetResponseObject); ok {
+		if err := validResponse.VisitPostMediaSetResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteMediaSet operation middleware
+func (sh *strictHandler) DeleteMediaSet(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request DeleteMediaSetRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteMediaSet(ctx, request.(DeleteMediaSetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteMediaSet")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(DeleteMediaSetResponseObject); ok {
+		if err := validResponse.VisitDeleteMediaSetResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMediaSet operation middleware
+func (sh *strictHandler) GetMediaSet(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request GetMediaSetRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMediaSet(ctx, request.(GetMediaSetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMediaSet")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMediaSetResponseObject); ok {
+		if err := validResponse.VisitGetMediaSetResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PatchMediaSet operation middleware
+func (sh *strictHandler) PatchMediaSet(w http.ResponseWriter, r *http.Request, id uint32) {
+	var request PatchMediaSetRequestObject
+
+	request.Id = id
+
+	var body PatchMediaSetJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchMediaSet(ctx, request.(PatchMediaSetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchMediaSet")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PatchMediaSetResponseObject); ok {
+		if err := validResponse.VisitPatchMediaSetResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"BgAA//9rG9sjMD8AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
