@@ -486,6 +486,40 @@ paths:
         "default":
           $ref: "#/components/responses/ErrorResponse"
 
+  /tmdb/movies:
+    get:
+      summary: Search for movies in TMDB.
+      operationId: searchTmdbMovies
+      parameters:
+        - name: query
+          in: query
+          description: Search query string
+          required: true
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: uint32
+        - name: page_token
+          in: query
+          description: Token for pagination
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TmdbMoviePage"
+        "default":
+          $ref: "#/components/responses/ErrorResponse"
+
 components:
   responses:
     ErrorResponse:
@@ -924,3 +958,34 @@ components:
             format: uint32
       required:
         - name
+
+    TmdbMovie:
+      type: object
+      properties:
+        tmdb_id:
+          type: integer
+          format: uint64
+        title:
+          type: string
+        description:
+          type: string
+        release_year:
+          type: integer
+          format: uint32
+        poster_url:
+          type: string
+      required:
+        - tmdb_id
+        - title
+
+    TmdbMoviePage:
+      type: object
+      properties:
+        movies:
+          type: array
+          items:
+            $ref: "#/components/schemas/TmdbMovie"
+        next_page_token:
+          type: string
+      required:
+        - movies

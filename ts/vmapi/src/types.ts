@@ -65,6 +65,10 @@ export interface paths {
     /** Update a media set. */
     patch: operations["patchMediaSet"];
   };
+  "/tmdb/movies": {
+    /** Search for movies in TMDB. */
+    get: operations["searchTmdbMovies"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -260,6 +264,19 @@ export interface components {
       name: string;
       note?: string;
       card_ids?: number[];
+    };
+    TmdbMovie: {
+      /** Format: uint64 */
+      tmdb_id: number;
+      title: string;
+      description?: string;
+      /** Format: uint32 */
+      release_year?: number;
+      poster_url?: string;
+    };
+    TmdbMoviePage: {
+      movies: components["schemas"]["TmdbMovie"][];
+      next_page_token?: string;
     };
   };
   responses: {
@@ -661,6 +678,28 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["MediaSet"];
+        };
+      };
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** Search for movies in TMDB. */
+  searchTmdbMovies: {
+    parameters: {
+      query: {
+        /** @description Search query string */
+        query: string;
+        /** @description Maximum number of items to return */
+        page_size?: number;
+        /** @description Token for pagination */
+        page_token?: string;
+      };
+    };
+    responses: {
+      /** @description Successful response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["TmdbMoviePage"];
         };
       };
       default: components["responses"]["ErrorResponse"];

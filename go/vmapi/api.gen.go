@@ -258,6 +258,21 @@ type MoviePost struct {
 	TmdbId *uint64 `json:"tmdb_id,omitempty"`
 }
 
+// TmdbMovie defines model for TmdbMovie.
+type TmdbMovie struct {
+	Description *string `json:"description,omitempty"`
+	PosterUrl   *string `json:"poster_url,omitempty"`
+	ReleaseYear *uint32 `json:"release_year,omitempty"`
+	Title       string  `json:"title"`
+	TmdbId      uint64  `json:"tmdb_id"`
+}
+
+// TmdbMoviePage defines model for TmdbMoviePage.
+type TmdbMoviePage struct {
+	Movies        []TmdbMovie `json:"movies"`
+	NextPageToken *string     `json:"next_page_token,omitempty"`
+}
+
 // ListCardsParams defines parameters for ListCards.
 type ListCardsParams struct {
 	// PageSize Maximum number of items to return
@@ -314,6 +329,18 @@ type ListMediaSetsParams struct {
 
 // PatchMediaSetJSONBody defines parameters for PatchMediaSet.
 type PatchMediaSetJSONBody = []MediaSetPatch
+
+// SearchTmdbMoviesParams defines parameters for SearchTmdbMovies.
+type SearchTmdbMoviesParams struct {
+	// Query Search query string
+	Query string `form:"query" json:"query"`
+
+	// PageSize Maximum number of items to return
+	PageSize *uint32 `form:"page_size,omitempty" json:"page_size,omitempty"`
+
+	// PageToken Token for pagination
+	PageToken *string `form:"page_token,omitempty" json:"page_token,omitempty"`
+}
 
 // PostCardJSONRequestBody defines body for PostCard for application/json ContentType.
 type PostCardJSONRequestBody = CardPost
@@ -490,6 +517,9 @@ type ClientInterface interface {
 	PatchMediaSetWithBody(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PatchMediaSet(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SearchTmdbMovies request
+	SearchTmdbMovies(ctx context.Context, params *SearchTmdbMoviesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ListCards(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -830,6 +860,18 @@ func (c *Client) PatchMediaSetWithBody(ctx context.Context, id uint32, contentTy
 
 func (c *Client) PatchMediaSet(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPatchMediaSetRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SearchTmdbMovies(ctx context.Context, params *SearchTmdbMoviesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSearchTmdbMoviesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1785,6 +1827,83 @@ func NewPatchMediaSetRequestWithBody(server string, id uint32, contentType strin
 	return req, nil
 }
 
+// NewSearchTmdbMoviesRequest generates requests for SearchTmdbMovies
+func NewSearchTmdbMoviesRequest(server string, params *SearchTmdbMoviesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tmdb/movies")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "query", runtime.ParamLocationQuery, params.Query); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_size", runtime.ParamLocationQuery, *params.PageSize); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PageToken != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page_token", runtime.ParamLocationQuery, *params.PageToken); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -1906,6 +2025,9 @@ type ClientWithResponsesInterface interface {
 	PatchMediaSetWithBodyWithResponse(ctx context.Context, id uint32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchMediaSetResponse, error)
 
 	PatchMediaSetWithResponse(ctx context.Context, id uint32, body PatchMediaSetJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchMediaSetResponse, error)
+
+	// SearchTmdbMoviesWithResponse request
+	SearchTmdbMoviesWithResponse(ctx context.Context, params *SearchTmdbMoviesParams, reqEditors ...RequestEditorFn) (*SearchTmdbMoviesResponse, error)
 }
 
 type ListCardsResponse struct {
@@ -2387,6 +2509,29 @@ func (r PatchMediaSetResponse) StatusCode() int {
 	return 0
 }
 
+type SearchTmdbMoviesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TmdbMoviePage
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r SearchTmdbMoviesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SearchTmdbMoviesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ListCardsWithResponse request returning *ListCardsResponse
 func (c *ClientWithResponses) ListCardsWithResponse(ctx context.Context, params *ListCardsParams, reqEditors ...RequestEditorFn) (*ListCardsResponse, error) {
 	rsp, err := c.ListCards(ctx, params, reqEditors...)
@@ -2638,6 +2783,15 @@ func (c *ClientWithResponses) PatchMediaSetWithResponse(ctx context.Context, id 
 		return nil, err
 	}
 	return ParsePatchMediaSetResponse(rsp)
+}
+
+// SearchTmdbMoviesWithResponse request returning *SearchTmdbMoviesResponse
+func (c *ClientWithResponses) SearchTmdbMoviesWithResponse(ctx context.Context, params *SearchTmdbMoviesParams, reqEditors ...RequestEditorFn) (*SearchTmdbMoviesResponse, error) {
+	rsp, err := c.SearchTmdbMovies(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSearchTmdbMoviesResponse(rsp)
 }
 
 // ParseListCardsResponse parses an HTTP response from a ListCardsWithResponse call
@@ -3305,6 +3459,39 @@ func ParsePatchMediaSetResponse(rsp *http.Response) (*PatchMediaSetResponse, err
 	return response, nil
 }
 
+// ParseSearchTmdbMoviesResponse parses an HTTP response from a SearchTmdbMoviesWithResponse call
+func ParseSearchTmdbMoviesResponse(rsp *http.Response) (*SearchTmdbMoviesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SearchTmdbMoviesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TmdbMoviePage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List cards
@@ -3370,6 +3557,9 @@ type ServerInterface interface {
 	// Update a media set.
 	// (PATCH /media_sets/{id})
 	PatchMediaSet(w http.ResponseWriter, r *http.Request, id uint32)
+	// Search for movies in TMDB.
+	// (GET /tmdb/movies)
+	SearchTmdbMovies(w http.ResponseWriter, r *http.Request, params SearchTmdbMoviesParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -3912,6 +4102,56 @@ func (siw *ServerInterfaceWrapper) PatchMediaSet(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r)
 }
 
+// SearchTmdbMovies operation middleware
+func (siw *ServerInterfaceWrapper) SearchTmdbMovies(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SearchTmdbMoviesParams
+
+	// ------------- Required query parameter "query" -------------
+
+	if paramValue := r.URL.Query().Get("query"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "query"})
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "query", r.URL.Query(), &params.Query)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "query", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "page_size" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "page_token" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page_token", r.URL.Query(), &params.PageToken)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_token", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SearchTmdbMovies(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -4053,6 +4293,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc("DELETE "+options.BaseURL+"/media_sets/{id}", wrapper.DeleteMediaSet)
 	m.HandleFunc("GET "+options.BaseURL+"/media_sets/{id}", wrapper.GetMediaSet)
 	m.HandleFunc("PATCH "+options.BaseURL+"/media_sets/{id}", wrapper.PatchMediaSet)
+	m.HandleFunc("GET "+options.BaseURL+"/tmdb/movies", wrapper.SearchTmdbMovies)
 
 	return m
 }
@@ -4668,6 +4909,35 @@ func (response PatchMediaSetdefaultJSONResponse) VisitPatchMediaSetResponse(w ht
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
+type SearchTmdbMoviesRequestObject struct {
+	Params SearchTmdbMoviesParams
+}
+
+type SearchTmdbMoviesResponseObject interface {
+	VisitSearchTmdbMoviesResponse(w http.ResponseWriter) error
+}
+
+type SearchTmdbMovies200JSONResponse TmdbMoviePage
+
+func (response SearchTmdbMovies200JSONResponse) VisitSearchTmdbMoviesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type SearchTmdbMoviesdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response SearchTmdbMoviesdefaultJSONResponse) VisitSearchTmdbMoviesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List cards
@@ -4733,6 +5003,9 @@ type StrictServerInterface interface {
 	// Update a media set.
 	// (PATCH /media_sets/{id})
 	PatchMediaSet(ctx context.Context, request PatchMediaSetRequestObject) (PatchMediaSetResponseObject, error)
+	// Search for movies in TMDB.
+	// (GET /tmdb/movies)
+	SearchTmdbMovies(ctx context.Context, request SearchTmdbMoviesRequestObject) (SearchTmdbMoviesResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -5358,40 +5631,68 @@ func (sh *strictHandler) PatchMediaSet(w http.ResponseWriter, r *http.Request, i
 	}
 }
 
+// SearchTmdbMovies operation middleware
+func (sh *strictHandler) SearchTmdbMovies(w http.ResponseWriter, r *http.Request, params SearchTmdbMoviesParams) {
+	var request SearchTmdbMoviesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SearchTmdbMovies(ctx, request.(SearchTmdbMoviesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SearchTmdbMovies")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SearchTmdbMoviesResponseObject); ok {
+		if err := validResponse.VisitSearchTmdbMoviesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
