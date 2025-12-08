@@ -193,6 +193,7 @@ export interface components {
       note?: string;
       /** Format: uint32 */
       media_set_id?: number;
+      clear_media_set_id?: boolean;
       /** Format: uint32 */
       add_card_id?: number;
       /** Format: uint32 */
