@@ -778,6 +778,7 @@ components:
         media_set_id:
           type: integer
           format: uint32
+        # TODO: add clear_media_set_id to remove media set association
         add_card_id:
           type: integer
           format: uint32
