@@ -818,22 +818,29 @@ components:
         dvd_inbox_path:
           type: string
 
-    DVDIngestionState:
-      type: string
-      enum: [pending, done, error]
+    DVDIngestion:
+      type: object
+      properties:
+        state:
+          description: Ingestion state of the DVD.
+          type: string
+          enum: [pending, done, error]
+        error_message:
+          description: Error message.  Set if and only if state is 'error'.
+          type: string
+      required:
+        - state
 
     DVD:
       type: object
       properties:
         path:
           type: string
-        ingestion_state:
-          $ref: "#/components/schemas/DVDIngestionState"
-        ingestion_error:
-          type: string
+        ingestion:
+          $ref: "#/components/schemas/DVDIngestion"
       required:
         - path
-        - ingestion_state
+        - ingestion
 
     DVDPatch:
       type: object
@@ -841,10 +848,8 @@ components:
       properties:
         path:
           type: string
-        ingestion_state:
-          $ref: "#/components/schemas/DVDIngestionState"
-        ingestion_error:
-          type: string
+        ingestion:
+          $ref: "#/components/schemas/DVDIngestion"
 
     MediaSet:
       type: object

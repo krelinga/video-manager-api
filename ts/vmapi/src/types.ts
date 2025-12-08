@@ -213,18 +213,23 @@ export interface components {
     MediaPostDetails: {
       dvd_inbox_path?: string;
     };
-    /** @enum {string} */
-    DVDIngestionState: "pending" | "done" | "error";
+    DVDIngestion: {
+      /**
+       * @description Ingestion state of the DVD.
+       * @enum {string}
+       */
+      state: "pending" | "done" | "error";
+      /** @description Error message.  Set if and only if state is 'error'. */
+      error_message?: string;
+    };
     DVD: {
       path: string;
-      ingestion_state: components["schemas"]["DVDIngestionState"];
-      ingestion_error?: string;
+      ingestion: components["schemas"]["DVDIngestion"];
     };
     /** @description Patch object with only one field set per instance */
     DVDPatch: {
       path?: string;
-      ingestion_state?: components["schemas"]["DVDIngestionState"];
-      ingestion_error?: string;
+      ingestion?: components["schemas"]["DVDIngestion"];
     };
     MediaSet: {
       /** Format: uint32 */
