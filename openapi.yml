@@ -825,6 +825,10 @@ components:
           description: Ingestion state of the DVD.
           type: string
           enum: [pending, done, error]
+          x-enum-varnames:
+            - DVDIngestionStatePending
+            - DVDIngestionStateDone
+            - DVDIngestionStateError
         error_message:
           description: Error message.  Set if and only if state is 'error'.
           type: string
