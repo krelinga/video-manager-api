@@ -523,9 +523,9 @@ paths:
 components:
   responses:
     ErrorResponse:
-      description: Error response
+      description: RFC 7807 compliant error response
       content:
-        application/json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
 
@@ -534,10 +534,19 @@ components:
     ErrorResponse:
       type: object
       properties:
-        message:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
           type: string
       required:
-        - message
+        - type
+        - title
+        - status
+        - detail
 
     # MovieEditionKind types
     MovieEditionKind:

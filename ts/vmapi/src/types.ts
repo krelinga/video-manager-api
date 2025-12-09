@@ -76,7 +76,10 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     ErrorResponse: {
-      message: string;
+      type: string;
+      title: string;
+      status: number;
+      detail: string;
     };
     MovieEditionKind: {
       /** Format: uint32 */
@@ -280,10 +283,10 @@ export interface components {
     };
   };
   responses: {
-    /** @description Error response */
+    /** @description RFC 7807 compliant error response */
     ErrorResponse: {
       content: {
-        "application/json": components["schemas"]["ErrorResponse"];
+        "application/problem+json": components["schemas"]["ErrorResponse"];
       };
     };
   };

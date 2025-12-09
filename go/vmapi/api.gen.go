@@ -104,7 +104,10 @@ type DVDPatch struct {
 
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
-	Message string `json:"message"`
+	Detail string `json:"detail"`
+	Status int    `json:"status"`
+	Title  string `json:"title"`
+	Type   string `json:"type"`
 }
 
 // InboxPage defines model for InboxPage.
@@ -2031,10 +2034,10 @@ type ClientWithResponsesInterface interface {
 }
 
 type ListCardsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CardPage
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *CardPage
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2054,10 +2057,10 @@ func (r ListCardsResponse) StatusCode() int {
 }
 
 type PostCardResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Card
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON201                       *Card
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2077,9 +2080,9 @@ func (r PostCardResponse) StatusCode() int {
 }
 
 type DeleteCardResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2099,10 +2102,10 @@ func (r DeleteCardResponse) StatusCode() int {
 }
 
 type GetCardResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Card
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *Card
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2122,10 +2125,10 @@ func (r GetCardResponse) StatusCode() int {
 }
 
 type PatchCardResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Card
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *Card
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2145,10 +2148,10 @@ func (r PatchCardResponse) StatusCode() int {
 }
 
 type ListMovieEditionKindsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MovieEditionKindPage
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MovieEditionKindPage
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2168,10 +2171,10 @@ func (r ListMovieEditionKindsResponse) StatusCode() int {
 }
 
 type PostMovieEditionKindResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *MovieEditionKind
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON201                       *MovieEditionKind
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2191,9 +2194,9 @@ func (r PostMovieEditionKindResponse) StatusCode() int {
 }
 
 type DeleteMovieEditionKindResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2213,10 +2216,10 @@ func (r DeleteMovieEditionKindResponse) StatusCode() int {
 }
 
 type GetMovieEditionKindResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MovieEditionKind
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MovieEditionKind
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2236,10 +2239,10 @@ func (r GetMovieEditionKindResponse) StatusCode() int {
 }
 
 type PatchMovieEditionKindResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MovieEditionKind
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MovieEditionKind
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2259,10 +2262,10 @@ func (r PatchMovieEditionKindResponse) StatusCode() int {
 }
 
 type ListInboxDVDsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *InboxPage
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *InboxPage
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2282,10 +2285,10 @@ func (r ListInboxDVDsResponse) StatusCode() int {
 }
 
 type ListMediaResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MediaPage
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MediaPage
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2305,10 +2308,10 @@ func (r ListMediaResponse) StatusCode() int {
 }
 
 type PostMediaResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Media
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON201                       *Media
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2328,9 +2331,9 @@ func (r PostMediaResponse) StatusCode() int {
 }
 
 type DeleteMediaResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2350,10 +2353,10 @@ func (r DeleteMediaResponse) StatusCode() int {
 }
 
 type GetMediaResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Media
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *Media
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2373,10 +2376,10 @@ func (r GetMediaResponse) StatusCode() int {
 }
 
 type PatchMediaResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Media
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *Media
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2396,10 +2399,10 @@ func (r PatchMediaResponse) StatusCode() int {
 }
 
 type ListMediaSetsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MediaSetPage
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MediaSetPage
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2419,10 +2422,10 @@ func (r ListMediaSetsResponse) StatusCode() int {
 }
 
 type PostMediaSetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *MediaSet
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON201                       *MediaSet
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2442,9 +2445,9 @@ func (r PostMediaSetResponse) StatusCode() int {
 }
 
 type DeleteMediaSetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2464,10 +2467,10 @@ func (r DeleteMediaSetResponse) StatusCode() int {
 }
 
 type GetMediaSetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MediaSet
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MediaSet
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2487,10 +2490,10 @@ func (r GetMediaSetResponse) StatusCode() int {
 }
 
 type PatchMediaSetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *MediaSet
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *MediaSet
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2510,10 +2513,10 @@ func (r PatchMediaSetResponse) StatusCode() int {
 }
 
 type SearchTmdbMoviesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *TmdbMoviePage
-	JSONDefault  *ErrorResponse
+	Body                          []byte
+	HTTPResponse                  *http.Response
+	JSON200                       *TmdbMoviePage
+	ApplicationproblemJSONDefault *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -2820,7 +2823,7 @@ func ParseListCardsResponse(rsp *http.Response) (*ListCardsResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -2853,7 +2856,7 @@ func ParsePostCardResponse(rsp *http.Response) (*PostCardResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -2879,7 +2882,7 @@ func ParseDeleteCardResponse(rsp *http.Response) (*DeleteCardResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -2912,7 +2915,7 @@ func ParseGetCardResponse(rsp *http.Response) (*GetCardResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -2945,7 +2948,7 @@ func ParsePatchCardResponse(rsp *http.Response) (*PatchCardResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -2978,7 +2981,7 @@ func ParseListMovieEditionKindsResponse(rsp *http.Response) (*ListMovieEditionKi
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3011,7 +3014,7 @@ func ParsePostMovieEditionKindResponse(rsp *http.Response) (*PostMovieEditionKin
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3037,7 +3040,7 @@ func ParseDeleteMovieEditionKindResponse(rsp *http.Response) (*DeleteMovieEditio
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3070,7 +3073,7 @@ func ParseGetMovieEditionKindResponse(rsp *http.Response) (*GetMovieEditionKindR
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3103,7 +3106,7 @@ func ParsePatchMovieEditionKindResponse(rsp *http.Response) (*PatchMovieEditionK
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3136,7 +3139,7 @@ func ParseListInboxDVDsResponse(rsp *http.Response) (*ListInboxDVDsResponse, err
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3169,7 +3172,7 @@ func ParseListMediaResponse(rsp *http.Response) (*ListMediaResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3202,7 +3205,7 @@ func ParsePostMediaResponse(rsp *http.Response) (*PostMediaResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3228,7 +3231,7 @@ func ParseDeleteMediaResponse(rsp *http.Response) (*DeleteMediaResponse, error) 
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3261,7 +3264,7 @@ func ParseGetMediaResponse(rsp *http.Response) (*GetMediaResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3294,7 +3297,7 @@ func ParsePatchMediaResponse(rsp *http.Response) (*PatchMediaResponse, error) {
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3327,7 +3330,7 @@ func ParseListMediaSetsResponse(rsp *http.Response) (*ListMediaSetsResponse, err
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3360,7 +3363,7 @@ func ParsePostMediaSetResponse(rsp *http.Response) (*PostMediaSetResponse, error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3386,7 +3389,7 @@ func ParseDeleteMediaSetResponse(rsp *http.Response) (*DeleteMediaSetResponse, e
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3419,7 +3422,7 @@ func ParseGetMediaSetResponse(rsp *http.Response) (*GetMediaSetResponse, error) 
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3452,7 +3455,7 @@ func ParsePatchMediaSetResponse(rsp *http.Response) (*PatchMediaSetResponse, err
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -3485,7 +3488,7 @@ func ParseSearchTmdbMoviesResponse(rsp *http.Response) (*SearchTmdbMoviesRespons
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.ApplicationproblemJSONDefault = &dest
 
 	}
 
@@ -4298,7 +4301,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	return m
 }
 
-type ErrorResponseJSONResponse ErrorResponse
+type ErrorResponseApplicationProblemPlusJSONResponse ErrorResponse
 
 type ListCardsRequestObject struct {
 	Params ListCardsParams
@@ -4317,13 +4320,13 @@ func (response ListCards200JSONResponse) VisitListCardsResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type ListCardsdefaultJSONResponse struct {
+type ListCardsdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response ListCardsdefaultJSONResponse) VisitListCardsResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response ListCardsdefaultApplicationProblemPlusJSONResponse) VisitListCardsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4346,13 +4349,13 @@ func (response PostCard201JSONResponse) VisitPostCardResponse(w http.ResponseWri
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostCarddefaultJSONResponse struct {
+type PostCarddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PostCarddefaultJSONResponse) VisitPostCardResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PostCarddefaultApplicationProblemPlusJSONResponse) VisitPostCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4374,13 +4377,13 @@ func (response DeleteCard204Response) VisitDeleteCardResponse(w http.ResponseWri
 	return nil
 }
 
-type DeleteCarddefaultJSONResponse struct {
+type DeleteCarddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response DeleteCarddefaultJSONResponse) VisitDeleteCardResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response DeleteCarddefaultApplicationProblemPlusJSONResponse) VisitDeleteCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4403,13 +4406,13 @@ func (response GetCard200JSONResponse) VisitGetCardResponse(w http.ResponseWrite
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetCarddefaultJSONResponse struct {
+type GetCarddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response GetCarddefaultJSONResponse) VisitGetCardResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response GetCarddefaultApplicationProblemPlusJSONResponse) VisitGetCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4433,13 +4436,13 @@ func (response PatchCard200JSONResponse) VisitPatchCardResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchCarddefaultJSONResponse struct {
+type PatchCarddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PatchCarddefaultJSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PatchCarddefaultApplicationProblemPlusJSONResponse) VisitPatchCardResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4462,13 +4465,13 @@ func (response ListMovieEditionKinds200JSONResponse) VisitListMovieEditionKindsR
 	return json.NewEncoder(w).Encode(response)
 }
 
-type ListMovieEditionKindsdefaultJSONResponse struct {
+type ListMovieEditionKindsdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response ListMovieEditionKindsdefaultJSONResponse) VisitListMovieEditionKindsResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response ListMovieEditionKindsdefaultApplicationProblemPlusJSONResponse) VisitListMovieEditionKindsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4491,13 +4494,13 @@ func (response PostMovieEditionKind201JSONResponse) VisitPostMovieEditionKindRes
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostMovieEditionKinddefaultJSONResponse struct {
+type PostMovieEditionKinddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PostMovieEditionKinddefaultJSONResponse) VisitPostMovieEditionKindResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PostMovieEditionKinddefaultApplicationProblemPlusJSONResponse) VisitPostMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4519,13 +4522,13 @@ func (response DeleteMovieEditionKind204Response) VisitDeleteMovieEditionKindRes
 	return nil
 }
 
-type DeleteMovieEditionKinddefaultJSONResponse struct {
+type DeleteMovieEditionKinddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response DeleteMovieEditionKinddefaultJSONResponse) VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response DeleteMovieEditionKinddefaultApplicationProblemPlusJSONResponse) VisitDeleteMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4548,13 +4551,13 @@ func (response GetMovieEditionKind200JSONResponse) VisitGetMovieEditionKindRespo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetMovieEditionKinddefaultJSONResponse struct {
+type GetMovieEditionKinddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response GetMovieEditionKinddefaultJSONResponse) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response GetMovieEditionKinddefaultApplicationProblemPlusJSONResponse) VisitGetMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4578,13 +4581,13 @@ func (response PatchMovieEditionKind200JSONResponse) VisitPatchMovieEditionKindR
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchMovieEditionKinddefaultJSONResponse struct {
+type PatchMovieEditionKinddefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PatchMovieEditionKinddefaultJSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PatchMovieEditionKinddefaultApplicationProblemPlusJSONResponse) VisitPatchMovieEditionKindResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4607,13 +4610,13 @@ func (response ListInboxDVDs200JSONResponse) VisitListInboxDVDsResponse(w http.R
 	return json.NewEncoder(w).Encode(response)
 }
 
-type ListInboxDVDsdefaultJSONResponse struct {
+type ListInboxDVDsdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response ListInboxDVDsdefaultJSONResponse) VisitListInboxDVDsResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response ListInboxDVDsdefaultApplicationProblemPlusJSONResponse) VisitListInboxDVDsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4636,13 +4639,13 @@ func (response ListMedia200JSONResponse) VisitListMediaResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type ListMediadefaultJSONResponse struct {
+type ListMediadefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response ListMediadefaultJSONResponse) VisitListMediaResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response ListMediadefaultApplicationProblemPlusJSONResponse) VisitListMediaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4665,13 +4668,13 @@ func (response PostMedia201JSONResponse) VisitPostMediaResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostMediadefaultJSONResponse struct {
+type PostMediadefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PostMediadefaultJSONResponse) VisitPostMediaResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PostMediadefaultApplicationProblemPlusJSONResponse) VisitPostMediaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4693,13 +4696,13 @@ func (response DeleteMedia204Response) VisitDeleteMediaResponse(w http.ResponseW
 	return nil
 }
 
-type DeleteMediadefaultJSONResponse struct {
+type DeleteMediadefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response DeleteMediadefaultJSONResponse) VisitDeleteMediaResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response DeleteMediadefaultApplicationProblemPlusJSONResponse) VisitDeleteMediaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4722,13 +4725,13 @@ func (response GetMedia200JSONResponse) VisitGetMediaResponse(w http.ResponseWri
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetMediadefaultJSONResponse struct {
+type GetMediadefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response GetMediadefaultJSONResponse) VisitGetMediaResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response GetMediadefaultApplicationProblemPlusJSONResponse) VisitGetMediaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4752,13 +4755,13 @@ func (response PatchMedia200JSONResponse) VisitPatchMediaResponse(w http.Respons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchMediadefaultJSONResponse struct {
+type PatchMediadefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PatchMediadefaultJSONResponse) VisitPatchMediaResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PatchMediadefaultApplicationProblemPlusJSONResponse) VisitPatchMediaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4781,13 +4784,13 @@ func (response ListMediaSets200JSONResponse) VisitListMediaSetsResponse(w http.R
 	return json.NewEncoder(w).Encode(response)
 }
 
-type ListMediaSetsdefaultJSONResponse struct {
+type ListMediaSetsdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response ListMediaSetsdefaultJSONResponse) VisitListMediaSetsResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response ListMediaSetsdefaultApplicationProblemPlusJSONResponse) VisitListMediaSetsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4810,13 +4813,13 @@ func (response PostMediaSet201JSONResponse) VisitPostMediaSetResponse(w http.Res
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostMediaSetdefaultJSONResponse struct {
+type PostMediaSetdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PostMediaSetdefaultJSONResponse) VisitPostMediaSetResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PostMediaSetdefaultApplicationProblemPlusJSONResponse) VisitPostMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4838,13 +4841,13 @@ func (response DeleteMediaSet204Response) VisitDeleteMediaSetResponse(w http.Res
 	return nil
 }
 
-type DeleteMediaSetdefaultJSONResponse struct {
+type DeleteMediaSetdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response DeleteMediaSetdefaultJSONResponse) VisitDeleteMediaSetResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response DeleteMediaSetdefaultApplicationProblemPlusJSONResponse) VisitDeleteMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4867,13 +4870,13 @@ func (response GetMediaSet200JSONResponse) VisitGetMediaSetResponse(w http.Respo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetMediaSetdefaultJSONResponse struct {
+type GetMediaSetdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response GetMediaSetdefaultJSONResponse) VisitGetMediaSetResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response GetMediaSetdefaultApplicationProblemPlusJSONResponse) VisitGetMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4897,13 +4900,13 @@ func (response PatchMediaSet200JSONResponse) VisitPatchMediaSetResponse(w http.R
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchMediaSetdefaultJSONResponse struct {
+type PatchMediaSetdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response PatchMediaSetdefaultJSONResponse) VisitPatchMediaSetResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response PatchMediaSetdefaultApplicationProblemPlusJSONResponse) VisitPatchMediaSetResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -4926,13 +4929,13 @@ func (response SearchTmdbMovies200JSONResponse) VisitSearchTmdbMoviesResponse(w 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type SearchTmdbMoviesdefaultJSONResponse struct {
+type SearchTmdbMoviesdefaultApplicationProblemPlusJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response SearchTmdbMoviesdefaultJSONResponse) VisitSearchTmdbMoviesResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
+func (response SearchTmdbMoviesdefaultApplicationProblemPlusJSONResponse) VisitSearchTmdbMoviesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(response.StatusCode)
 
 	return json.NewEncoder(w).Encode(response.Body)
@@ -5660,39 +5663,40 @@ func (sh *strictHandler) SearchTmdbMovies(w http.ResponseWriter, r *http.Request
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"c4gy9OFu9bNm4+n0/wAAAP//qcsZPA1FAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
