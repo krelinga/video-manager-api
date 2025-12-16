@@ -236,7 +236,6 @@ export interface components {
     /** @description Patch object with only one field set per instance */
     DVDPatch: {
       path?: string;
-      ingestion?: components["schemas"]["DVDIngestion"];
     };
     MediaSet: {
       /** Format: uint32 */

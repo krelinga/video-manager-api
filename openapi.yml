@@ -895,8 +895,6 @@ components:
       properties:
         path:
           type: string
-        ingestion:
-          $ref: "#/components/schemas/DVDIngestion"
 
     MediaSet:
       type: object
